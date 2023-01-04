@@ -1,4 +1,4 @@
-import 'package:drop_application/presentation/pages/authentication/widget_auth_tree.dart';
+import 'package:drop_application/presentation/router/router.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
@@ -13,11 +13,10 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return MaterialApp.router(
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(primarySwatch: Colors.orange
-      ),
-      home: const WidgetAuthTree(),
+      theme: ThemeData(primarySwatch: Colors.orange),
+      routerConfig: router,
     );
   }
 }

@@ -9,8 +9,9 @@ class Skeleton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: const Color(0xFFF7A727),
-        title: const Center(child: Text('2DO')),
+        title: const Center(
+          child: Text('DROP'),
+        ),
       ),
       body: SafeArea(
         child: widget,

@@ -12,10 +12,6 @@ class HomePage extends StatelessWidget {
     await Auth().signOut();
   }
 
-  Widget _title() {
-    return const Text('DROP');
-  }
-
   Widget _userUid() {
     return Text(user?.email ?? 'User email');
   }
@@ -30,22 +26,17 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title:  _title(),
-      ),
-      body: SafeArea(
-        child: Container(
-          height: double.infinity,
-          width: double.infinity,
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              _userUid(),
-              _signOutButton()
-            ],
-          ),
+      body: Container(
+        height: double.infinity,
+        width: double.infinity,
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            _userUid(),
+            _signOutButton()
+          ],
         ),
       ),
     );
