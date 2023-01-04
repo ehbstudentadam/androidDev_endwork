@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "507013646985",
+    "project_id": "drop-a1df0",
+    "storage_bucket": "drop-a1df0.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:507013646985:android:5f56e94fc07199e5709458",
+        "android_client_info": {
+          "package_name": "com.example.drop_application"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "507013646985-srce3f5fuffnud7fvvfo1rasfilpa8eb.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBlndnGml6-EbUJQ0JDg6J2txvyRCfrJ3c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "507013646985-srce3f5fuffnud7fvvfo1rasfilpa8eb.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
