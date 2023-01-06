@@ -1,6 +1,10 @@
 import 'package:drop_application/presentation/routing/router.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import 'bloc/auth/auth_bloc.dart';
+import 'data/repository/auth_repository.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -13,10 +17,21 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(primarySwatch: Colors.orange),
-      routerConfig: router,
+    return RepositoryProvider(
+      create: (context) => AuthRepository(),
+      child: MultiBlocProvider(
+        providers: [
+          BlocProvider(
+            create: (context) =>
+                AuthBloc(authRepository: RepositoryProvider.of(context)),
+          ),
+        ],
+        child: MaterialApp.router(
+          debugShowCheckedModeBanner: false,
+          theme: ThemeData(primarySwatch: Colors.orange),
+          routerConfig: router,
+        ),
+      ),
     );
   }
 }

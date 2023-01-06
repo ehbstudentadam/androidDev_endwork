@@ -10,7 +10,7 @@ class Skeleton extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          onPressed: (){
+          onPressed: () {
             //todo
           },
           icon: const Icon(Icons.account_circle),
