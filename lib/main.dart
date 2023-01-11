@@ -1,8 +1,10 @@
+import 'package:drop_application/bloc/item/item_bloc.dart';
+import 'package:drop_application/data/repository/firestore_repository.dart';
+import 'package:drop_application/data/repository/storage_repository.dart';
 import 'package:drop_application/presentation/routing/router.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 import 'bloc/auth/auth_bloc.dart';
 import 'data/repository/auth_repository.dart';
 
@@ -17,18 +19,33 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return RepositoryProvider(
-      create: (context) => AuthRepository(),
+    return MultiRepositoryProvider(
+      providers: [
+        RepositoryProvider(
+          create: (context) => AuthRepository(),
+        ),
+        RepositoryProvider(
+          create: (context) => FirestoreRepository(),
+        ),
+        RepositoryProvider(
+          create: (context) => StorageRepository(),
+        ),
+      ],
       child: MultiBlocProvider(
         providers: [
           BlocProvider(
             create: (context) =>
                 AuthBloc(authRepository: RepositoryProvider.of(context)),
           ),
+          BlocProvider(
+            create: (context) => ItemBloc(
+                firestoreRepository: RepositoryProvider.of(context),
+                authRepository: RepositoryProvider.of(context)),
+          ),
         ],
         child: MaterialApp.router(
           debugShowCheckedModeBanner: false,
-          theme: ThemeData(primarySwatch: Colors.orange),
+          theme: ThemeData(primarySwatch: Colors.deepPurple),
           routerConfig: router,
         ),
       ),

@@ -28,7 +28,12 @@ final router = GoRouter(
       parentNavigatorKey: _parentKey,
       builder: (context, state) => const SignIn(),
     ),
-    ShellRoute(
+    GoRoute(
+      path: '/dashboard',
+      parentNavigatorKey: _parentKey,
+      builder: (context, state) => const Dashboard(),
+    ),
+    /*ShellRoute(
       navigatorKey: _shellKey,
       builder: (context, state, child) => Skeleton(widget: child),
       routes: [
@@ -38,6 +43,6 @@ final router = GoRouter(
           builder: (context, state) => const Dashboard(),
         ),
       ],
-    ),
+    ),*/
   ],
 );
