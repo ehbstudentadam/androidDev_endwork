@@ -7,7 +7,6 @@ abstract class ItemEvent extends Equatable {
 }
 
 class LoadItemsEvent extends ItemEvent{
-
 }
 
 class CreateItemEvent extends ItemEvent {

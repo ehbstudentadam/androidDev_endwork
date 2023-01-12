@@ -28,8 +28,8 @@ class Item {
         'createdDate': timestamp,
         'description': description,
         'price': price,
-        'images': images,
-        'bids': bids,
+        if (images != null) 'images': images,
+        if (bids != null) 'bids': bids,
       };
 
   static Item fromJson(Map<String, dynamic> json) => Item(

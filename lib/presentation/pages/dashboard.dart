@@ -1,5 +1,7 @@
 import 'package:drop_application/data/models/item.dart';
 import 'package:drop_application/presentation/widgets/item_panel.dart';
+import 'package:drop_application/presentation/widgets/settings_drawer.dart';
+import 'package:drop_application/presentation/widgets/user_drawer.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -15,6 +17,8 @@ class Dashboard extends StatelessWidget {
     // Getting the user from the FirebaseAuth Instance
     final user = FirebaseAuth.instance.currentUser!;
     return Scaffold(
+      drawer: const UserDrawer(),
+      endDrawer: const SettingsDrawer(),
       body: MultiBlocListener(
         listeners: [
           BlocListener<AuthBloc, AuthState>(
@@ -52,7 +56,7 @@ class Dashboard extends StatelessWidget {
                     centerTitle: false,
                     leading: IconButton(
                       onPressed: () {
-                        //todo
+                        return Scaffold.of(context).openDrawer();
                       },
                       icon: const Icon(Icons.account_circle),
                     ),
@@ -68,10 +72,11 @@ class Dashboard extends StatelessWidget {
                       IconButton(
                           icon: const Icon(Icons.settings),
                           onPressed: () {
-                            //code to execute when this button is pressed
+                            return Scaffold.of(context).openEndDrawer();
                           }),
                     ],
                     bottom: AppBar(
+                      automaticallyImplyLeading: false,
                       title: Container(
                         width: double.infinity,
                         height: 40,
@@ -109,7 +114,8 @@ class Dashboard extends StatelessWidget {
                             delegate: SliverChildListDelegate([
                               const Padding(
                                 padding: EdgeInsets.all(24.0),
-                                child: Center(child: CircularProgressIndicator()),
+                                child:
+                                    Center(child: CircularProgressIndicator()),
                               ),
                             ]),
                           );
