@@ -16,20 +16,15 @@ class UserDrawer extends StatelessWidget {
             decoration: BoxDecoration(
               color: Colors.deepPurpleAccent,
               image: DecorationImage(
-                fit: BoxFit.fill,
+                fit: BoxFit.cover,
                 image: AssetImage(
                     'assets/images/drawer.jpg'),
               ),
             ),
             child: Text(
-              'Side menu',
+              'Account',
               style: TextStyle(color: Colors.white, fontSize: 25),
             ),
-          ),
-          ListTile(
-            leading: const Icon(Icons.input),
-            title: const Text('Welcome'),
-            onTap: () => {},
           ),
           ListTile(
             leading: const Icon(Icons.verified_user),
@@ -39,11 +34,6 @@ class UserDrawer extends StatelessWidget {
           ListTile(
             leading: const Icon(Icons.settings),
             title: const Text('Settings'),
-            onTap: () => {Navigator.of(context).pop()},
-          ),
-          ListTile(
-            leading: const Icon(Icons.border_color),
-            title: const Text('Feedback'),
             onTap: () => {Navigator.of(context).pop()},
           ),
           ListTile(

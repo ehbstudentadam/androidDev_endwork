@@ -17,35 +17,52 @@ class ItemPanel extends StatelessWidget {
             SizedBox(
               width: 100,
               height: 100,
-              child: Image.network(
-                item.images?.first ??
-                "https://firebasestorage.googleapis.com/v0/b/drop-a1df0.appspot.com/o/application%2FCapture.JPG?alt=media&token=c32fe297-9d4a-4ef2-9021-5330dad0a338",
-                fit: BoxFit.cover,
-              ),
+              child: Builder(
+                  builder: (BuildContext context){
+                    if(item.images?.first == ""){
+                      return Image.network(
+                            "https://firebasestorage.googleapis.com/v0/b/drop-a1df0.appspot.com/o/application%2Fno_image_in_database.png?alt=media&token=8f78766d-c27d-4a08-8707-44828f0791f9",
+                        fit: BoxFit.cover,
+                      );
+                    } else {
+                      return Image.network(
+                      item.images?.first ??
+                          "https://firebasestorage.googleapis.com/v0/b/drop-a1df0.appspot.com/o/application%2Fno_image_in_database.png?alt=media&token=8f78766d-c27d-4a08-8707-44828f0791f9",
+                      fit: BoxFit.cover,
+                    );
+                    }
+                  },
+              )
             ),
-            Padding(
-              padding: const EdgeInsets.only(left: 24),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    item.title,
-                    style: Theme.of(context).textTheme.headline4,
-                  ),
-                  Row(
-                    children: [
-                      Text(
-                        item.price.toString(),
-                        style: Theme.of(context).textTheme.headline6,
-                      ),
-                      IconButton(
-                          icon: const Icon(Icons.favorite),
-                          onPressed: () {
-                            //code to execute when this button is pressed
-                          }),
-                    ],
-                  )
-                ],
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.only(left: 24),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      item.title,
+                      style: Theme.of(context).textTheme.headline4,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          item.price.toString(),
+                          style: Theme.of(context).textTheme.headline6,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: IconButton(
+                              icon: const Icon(Icons.favorite),
+                              onPressed: () {
+                                //code to execute when this button is pressed
+                              }),
+                        ),
+                      ],
+                    )
+                  ],
+                ),
               ),
             )
           ],

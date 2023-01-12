@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 import '../../bloc/auth/auth_bloc.dart';
 
-class SettingsDrawer extends StatelessWidget {
-  const SettingsDrawer({super.key});
+class MenuDrawer extends StatelessWidget {
+  const MenuDrawer({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -22,36 +21,29 @@ class SettingsDrawer extends StatelessWidget {
               ),
             ),
             child: Text(
-              'Side menu',
+              'Menu',
               style: TextStyle(color: Colors.white, fontSize: 25),
             ),
           ),
           ListTile(
-            leading: const Icon(Icons.input),
-            title: const Text('Welcome'),
+            leading: const Icon(Icons.sell),
+            title: const Text('My Auctions'),
             onTap: () => {},
           ),
           ListTile(
-            leading: const Icon(Icons.verified_user),
-            title: const Text('Profile'),
+            leading: const Icon(Icons.post_add),
+            title: const Text('New Auction'),
             onTap: () => {Navigator.of(context).pop()},
           ),
           ListTile(
-            leading: const Icon(Icons.settings),
-            title: const Text('Settings'),
+            leading: const Icon(Icons.history),
+            title: const Text('My bids'),
             onTap: () => {Navigator.of(context).pop()},
           ),
           ListTile(
-            leading: const Icon(Icons.border_color),
-            title: const Text('Feedback'),
+            leading: const Icon(Icons.favorite),
+            title: const Text('Favourites'),
             onTap: () => {Navigator.of(context).pop()},
-          ),
-          ListTile(
-            leading: const Icon(Icons.exit_to_app),
-            title: const Text('Logout'),
-            onTap: () {
-              context.read<AuthBloc>().add(SignOutRequested());
-            },
           ),
         ],
       ),

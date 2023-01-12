@@ -1,6 +1,6 @@
 import 'package:drop_application/data/models/item.dart';
 import 'package:drop_application/presentation/widgets/item_panel.dart';
-import 'package:drop_application/presentation/widgets/settings_drawer.dart';
+import 'package:drop_application/presentation/widgets/menu_drawer.dart';
 import 'package:drop_application/presentation/widgets/user_drawer.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -18,7 +18,7 @@ class Dashboard extends StatelessWidget {
     final user = FirebaseAuth.instance.currentUser!;
     return Scaffold(
       drawer: const UserDrawer(),
-      endDrawer: const SettingsDrawer(),
+      endDrawer: const MenuDrawer(),
       body: MultiBlocListener(
         listeners: [
           BlocListener<AuthBloc, AuthState>(
@@ -67,16 +67,17 @@ class Dashboard extends StatelessWidget {
                       IconButton(
                           icon: const Icon(Icons.home),
                           onPressed: () {
-                            //code to execute when this button is pressed
+                            GoRouter.of(context).go('/dashboard');
                           }),
                       IconButton(
-                          icon: const Icon(Icons.settings),
+                          icon: const Icon(Icons.menu),
                           onPressed: () {
                             return Scaffold.of(context).openEndDrawer();
                           }),
                     ],
                     bottom: AppBar(
                       automaticallyImplyLeading: false,
+                      actions: <Widget>[Container()],
                       title: Container(
                         width: double.infinity,
                         height: 40,
