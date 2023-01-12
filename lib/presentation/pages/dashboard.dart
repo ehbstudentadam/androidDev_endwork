@@ -50,6 +50,12 @@ class Dashboard extends StatelessWidget {
               return CustomScrollView(
                 slivers: [
                   SliverAppBar(
+                    shape: const ContinuousRectangleBorder(
+                      borderRadius: BorderRadius.only(
+                        bottomLeft: Radius.circular(16),
+                        bottomRight: Radius.circular(16),
+                      ),
+                    ),
                     floating: true,
                     pinned: true,
                     snap: false,
@@ -76,16 +82,35 @@ class Dashboard extends StatelessWidget {
                           }),
                     ],
                     bottom: AppBar(
+                      shape: const ContinuousRectangleBorder(
+                        borderRadius: BorderRadius.only(
+                          bottomLeft: Radius.circular(16),
+                          bottomRight: Radius.circular(16),
+                        ),
+                      ),
                       automaticallyImplyLeading: false,
                       actions: <Widget>[Container()],
                       title: Container(
                         width: double.infinity,
                         height: 40,
-                        color: Colors.white,
+                        //color: Colors.white,
+                        decoration: const BoxDecoration(
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(16),
+                          ),
+                          color: Colors.white,
+                        ),
                         child: const Center(
                           child: TextField(
+                            textAlignVertical: TextAlignVertical.bottom,
                             decoration: InputDecoration(
-                              hintText: 'Search...',
+                              border: OutlineInputBorder(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(16.0)),
+                                borderSide:
+                                    BorderSide(color: Colors.deepPurple),
+                              ),
+                              hintText: '    Search...',
                               prefixIcon: Icon(Icons.search),
                             ),
                           ),
