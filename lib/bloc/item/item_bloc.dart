@@ -22,8 +22,8 @@ class ItemBloc extends Bloc<ItemEvent, ItemState> {
             title: event.title,
             description: event.description,
             price: event.price);
-        var items = firestoreRepository.getAllItems();
-        emit(ItemsLoadedState(items));
+        var items = await firestoreRepository.getAllItems().toList();
+        //emit(ItemsLoadedState(items));
       } catch (e) {
         emit(ItemErrorState(e.toString()));
       }
@@ -35,5 +35,6 @@ class ItemBloc extends Bloc<ItemEvent, ItemState> {
       emit(ItemsLoadedState(items));
     });
 
+    add(LoadItemsEvent());
   }
 }

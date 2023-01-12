@@ -1,3 +1,5 @@
+import 'package:drop_application/data/models/item.dart';
+import 'package:drop_application/presentation/widgets/item_panel.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -25,9 +27,6 @@ class Dashboard extends StatelessWidget {
           ),
           BlocListener<ItemBloc, ItemState>(
             listener: (context, state) {
-              if (state is ItemsLoadingState) {
-                context.read<ItemBloc>().add(LoadItemsEvent());
-              }
               if (state is ItemErrorState) {
                 ScaffoldMessenger.of(context)
                     .showSnackBar(SnackBar(content: Text(state.error)));
@@ -89,25 +88,33 @@ class Dashboard extends StatelessWidget {
                     ),
                   ),
                   // Other Sliver Widgets
-                  SliverList(
-                    delegate: SliverChildBuilderDelegate(
-                      (BuildContext context, int index) {
-                        return Card(
-                          margin: const EdgeInsets.all(5),
-                          child: Container(
-                            color: Colors.purple[100 * (index % 9 + 1)],
-                            height: 80,
-                            alignment: Alignment.center,
-                            child: Text(
-                              "Item $index",
-                              style: const TextStyle(fontSize: 30),
+                  StreamBuilder<List<Item>>(
+                      stream: state.items,
+                      builder: (context, snapshot) {
+                        if (snapshot.hasError) {
+                          // todo
+                        }
+                        if (snapshot.hasData) {
+                          return SliverList(
+                            delegate: SliverChildBuilderDelegate(
+                              (BuildContext context, int index) {
+                                return ItemPanel(item: snapshot.data![index]);
+                              },
+                              childCount:
+                                  snapshot.data?.length, // 1000 list items
                             ),
-                          ),
-                        );
-                      },
-                      childCount: 1000, // 1000 list items
-                    ),
-                  )
+                          );
+                        } else {
+                          return SliverList(
+                            delegate: SliverChildListDelegate([
+                              const Padding(
+                                padding: EdgeInsets.all(24.0),
+                                child: Center(child: CircularProgressIndicator()),
+                              ),
+                            ]),
+                          );
+                        }
+                      })
                 ],
               );
             }

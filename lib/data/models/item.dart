@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
 class Item {
-  String id;
+  //String id;
   final String sellerID;
   final String title;
   final DateTime timestamp;
@@ -12,7 +12,7 @@ class Item {
   final List<String>? bids;
 
   Item(
-      {this.id = '',
+      {//this.id = '',
       required this.sellerID,
       required this.title,
       required this.timestamp,
@@ -22,10 +22,10 @@ class Item {
       this.bids});
 
   Map<String, dynamic> toJson() => {
-        'id': id,
+        //'id': id,
         'sellerID': sellerID,
         'title': title,
-        'timestamp': timestamp,
+        'createdDate': timestamp,
         'description': description,
         'price': price,
         'images': images,
@@ -33,13 +33,13 @@ class Item {
       };
 
   static Item fromJson(Map<String, dynamic> json) => Item(
-        id: json['id'],
+        //id: json['id'],
         sellerID: json['sellerID'],
         title: json['title'],
-        timestamp: (json['timestamp'] as Timestamp).toDate(),
+        timestamp: (json['createdDate'] as Timestamp).toDate(),
         description: json['description'],
         price: json['price'],
-        images: json['images'] is Iterable ? List.from(json['images']) : null,
-        bids: json['bids'] is Iterable ? List.from(json['bids']) : null,
+        images: json?['images'] is Iterable ? List.from(json?['images']) : null,
+        bids: json?['bids'] is Iterable ? List.from(json?['bids']) : null,
       );
 }
