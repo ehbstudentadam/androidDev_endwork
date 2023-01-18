@@ -17,7 +17,22 @@ class ItemsLoadedState extends ItemState {
   List<Object?> get props => [items];
 }
 
-class ItemErrorState extends ItemState{
+class ItemLoadingState extends ItemState {
+  @override
+  List<Object?> get props => [];
+}
+
+class ItemLoadedState extends ItemState {
+  final Item item;
+  final DbUser dbUser;
+
+  ItemLoadedState(this.item, this.dbUser);
+
+  @override
+  List<Object?> get props => [item];
+}
+
+class ItemErrorState extends ItemState {
   final String error;
 
   ItemErrorState(this.error);

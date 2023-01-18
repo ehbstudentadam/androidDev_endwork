@@ -73,7 +73,10 @@ class Dashboard extends StatelessWidget {
                       IconButton(
                           icon: const Icon(Icons.home),
                           onPressed: () {
-                            GoRouter.of(context).go('/dashboard');
+                            if (GoRouter.of(context).location == '/dashboard' ||
+                                GoRouter.of(context).location == '/') {
+                              //do nothing
+                            }
                           }),
                       IconButton(
                           icon: const Icon(Icons.menu),
@@ -131,8 +134,7 @@ class Dashboard extends StatelessWidget {
                               (BuildContext context, int index) {
                                 return ItemPanel(item: snapshot.data![index]);
                               },
-                              childCount:
-                                  snapshot.data?.length, // 1000 list items
+                              childCount: snapshot.data?.length,
                             ),
                           );
                         } else {
@@ -140,8 +142,9 @@ class Dashboard extends StatelessWidget {
                             delegate: SliverChildListDelegate([
                               const Padding(
                                 padding: EdgeInsets.all(24.0),
-                                child:
-                                    Center(child: CircularProgressIndicator()),
+                                child: Center(
+                                  child: CircularProgressIndicator(),
+                                ),
                               ),
                             ]),
                           );

@@ -2,23 +2,21 @@ import 'bid.dart';
 import 'item.dart';
 
 class DbUser {
-  String id;
   final String authUserID;
-  final String? userName;
+  final String userName;
   final List<String>? itemsForSale;
   final List<String>? itemFavourites;
   final List<String>? bids;
 
   DbUser(
-      {this.id = '',
+      {
       required this.authUserID,
-      this.userName,
+      required this.userName,
       this.itemsForSale,
       this.itemFavourites,
       this.bids});
 
   Map<String, dynamic> toJson() => {
-        'id': id,
         'authUserID': authUserID,
         'userName': userName,
         'itemsForSale': itemsForSale,
@@ -27,7 +25,6 @@ class DbUser {
       };
 
   static DbUser fromJson(Map<String, dynamic> json) => DbUser(
-        id: json['id'],
         authUserID: json['authUserID'],
         userName: json['userName'],
         itemsForSale: json['itemsForSale'] is Iterable

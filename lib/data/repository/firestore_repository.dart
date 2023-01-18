@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:drop_application/data/models/bid.dart';
 import 'package:drop_application/data/models/db_user.dart';
@@ -11,7 +13,7 @@ class FirestoreRepository {
   }) async {
     try {
       final docUser = _firestoreDB.collection('users').doc();
-      final dbUser = DbUser(id: docUser.id, authUserID: authUserID);
+      final dbUser = DbUser(authUserID: authUserID, userName: 'new user');
       final json = dbUser.toJson();
 
       await docUser.set(json);
@@ -20,15 +22,49 @@ class FirestoreRepository {
     }
   }
 
+  Future<void> createBid({
+    required String bidderID,
+    required String itemID,
+    required double price,
+  }) async {
+    try {
+      //add bid
+      final docBids = _firestoreDB.collection('bids').doc();
+      final bid = Bid(
+          bidderID: bidderID,
+          itemID: itemID,
+          price: price,
+          timestamp: DateTime.now());
+      final json = bid.toJson();
+
+      await docBids.set(json);
+      String bidId = docBids.id;
+
+      //update item with new bid
+      final docItem = _firestoreDB.collection('items').doc(itemID);
+      docItem.update({
+        'bids': FieldValue.arrayUnion([bidId].toList()),
+      });
+
+      //update user with new bid
+      final docDbUser = _firestoreDB.collection('users').doc(bidderID);
+      docDbUser.update({
+        'bids': FieldValue.arrayUnion([bidId].toList()),
+      });
+    } catch (e) {
+      throw Exception(e);
+    }
+  }
+
   Future<void> createItem(
-      {required String authUserID,
+      {required String dbUserId,
       required String title,
       required String description,
       required double price}) async {
     try {
       final docItem = _firestoreDB.collection('items').doc();
       final item = Item(
-          sellerID: authUserID,
+          sellerID: dbUserId,
           title: title,
           timestamp: DateTime.now(),
           description: description,
@@ -49,13 +85,63 @@ class FirestoreRepository {
     });
   }
 
-  Future<DbUser?> getDBUserByDBUserId({required String dbUserID}) async {
-    final docUser = _firestoreDB.collection('users').doc(dbUserID);
-    final snapshot = await docUser.get();
+  Future<String> getDbUserNameFromDbUserID({required String dbUserID}) async {
+    try {
+      final docUser = _firestoreDB.collection('users').doc(dbUserID);
+      final snapshot = await docUser.get();
+
+      if (snapshot.exists) {
+        if (snapshot.data() != null) {
+          return DbUser.fromJson(snapshot.data()!).userName;
+        }
+      }
+      throw Exception("getDBUserByDBUserId() No fireStore userName found");
+    } catch (e) {
+      throw Exception(e);
+    }
+  }
+
+  Future<DbUser> getDBUserByDBUserId({required String dbUserID}) async {
+    try {
+      final docUser = _firestoreDB.collection('users').doc(dbUserID);
+      final snapshot = await docUser.get();
+
+      if (snapshot.exists) {
+        return DbUser.fromJson(snapshot.data()!);
+      }
+      throw Exception("getDBUserByDBUserId() No fireStore user found");
+    } catch (e) {
+      throw Exception(e);
+    }
+  }
+
+  Future<String> getDBUserIdByAuthUserId({required String authUserId}) async {
+    try {
+      final docUser = _firestoreDB
+          .collection('users')
+          .where('authUserID', isEqualTo: authUserId);
+      final snapshot = await docUser.get();
+
+      // Iterate through the documents in the snapshot
+      for (var doc in snapshot.docs) {
+        if (doc.exists) {
+          return doc.id;
+        }
+      }
+      throw Exception("getDBUserIdByAuthUserId() No fireStore user found");
+    } catch (e) {
+      throw Exception(e);
+    }
+  }
+
+  Future<Bid?> getBidByBidId({required String bidID}) async {
+    final docBid = _firestoreDB.collection('bids').doc(bidID);
+    final snapshot = await docBid.get();
 
     if (snapshot.exists) {
-      return DbUser.fromJson(snapshot.data()!);
+      return Bid.fromJson(snapshot.data()!);
     }
+
     return null;
   }
 
@@ -98,13 +184,6 @@ class FirestoreRepository {
     return null;
   }
 
-  Stream<List<Bid>> getAllBidsByItemId({required String itemID}) => _firestoreDB
-      .collection('bids')
-      .where('itemID', isEqualTo: itemID)
-      .snapshots()
-      .map((snapshot) =>
-          snapshot.docs.map((doc) => Bid.fromJson(doc.data())).toList());
-
   Stream<List<Bid>> getAllBidsByDBUserId(
           {required String dbUserID}) =>
       _firestoreDB
@@ -122,7 +201,48 @@ class FirestoreRepository {
           .map((snapshot) =>
               snapshot.docs.map((doc) => Item.fromJson(doc.data())).toList());
 
-  Stream<List<Item>> getAllItems() =>
-      _firestoreDB.collection('items').snapshots().map((snapshot) =>
-          snapshot.docs.map((doc) => Item.fromJson(doc.data())).toList());
+
+
+  Stream<List<Bid>> getAllBidsByItemId({required String itemID}) async* {
+    try {
+      yield* _firestoreDB
+          .collection('bids')
+          .where('itemID', isEqualTo: itemID)
+          .snapshots()
+          .asyncMap<List<Bid>>((event) async {
+        List<Bid> bids = [];
+
+        for (var doc in event.docs) {
+          try {
+            Bid bid = Bid.fromJson(doc.data());
+            bid.bidId = doc.id;
+            bid.userName =
+                await getDbUserNameFromDbUserID(dbUserID: bid.bidderID);
+
+            bids.add(bid);
+          } catch (e) {
+            throw Exception(e);
+          }
+        }
+        return bids;
+      });
+    } catch (e) {
+      throw Exception(e);
+    }
+  }
+
+  Stream<List<Item>> getAllItems() {
+    try {
+      return _firestoreDB
+          .collection('items')
+          .snapshots()
+          .map((snapshot) => snapshot.docs.map((doc) {
+                Item item = Item.fromJson(doc.data());
+                item.itemID = doc.id;
+                return item;
+              }).toList());
+    } catch (e) {
+      throw Exception(e);
+    }
+  }
 }

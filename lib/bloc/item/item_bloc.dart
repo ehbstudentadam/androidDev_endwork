@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../data/models/db_user.dart';
 import '../../data/models/item.dart';
 import '../../data/repository/auth_repository.dart';
 import '../../data/repository/firestore_repository.dart';
@@ -13,12 +14,12 @@ class ItemBloc extends Bloc<ItemEvent, ItemState> {
 
   ItemBloc({required this.firestoreRepository, required this.authRepository})
       : super(ItemsLoadingState()) {
-
+/*
     on<CreateItemEvent>((event, emit) async {
       emit(ItemsLoadingState());
       try {
         await firestoreRepository.createItem(
-            authUserID: await authRepository.getCurrentAuthenticatedUserId(),
+            dbUserId: await firestoreRepository.getDBUserByAuthUserId(authUserId: await authRepository.getCurrentAuthenticatedUserId()),
             title: event.title,
             description: event.description,
             price: event.price);
@@ -27,14 +28,31 @@ class ItemBloc extends Bloc<ItemEvent, ItemState> {
       } catch (e) {
         emit(ItemErrorState(e.toString()));
       }
-    });
+    });*/
 
-    on<LoadItemsEvent>((event, emit) async {
+    on<LoadAllItemsEvent>((event, emit) async {
       emit(ItemsLoadingState());
-      var items = firestoreRepository.getAllItems();
-      emit(ItemsLoadedState(items));
+      try{
+        var items = firestoreRepository.getAllItems();
+        emit(ItemsLoadedState(items));
+      }catch(e){
+        emit(ItemErrorState(e.toString()));
+      }
     });
 
-    add(LoadItemsEvent());
+
+
+    on<LoadItemEvent>((event, emit) async {
+      emit(ItemsLoadingState());
+      try {
+        DbUser? databaseUser = await firestoreRepository.getDBUserByDBUserId(
+            dbUserID: event.item.sellerID);
+        emit(ItemLoadedState(event.item, databaseUser!));
+      } catch (e) {
+        emit(ItemErrorState(e.toString()));
+      }
+    });
+
+    add(LoadAllItemsEvent());
   }
 }

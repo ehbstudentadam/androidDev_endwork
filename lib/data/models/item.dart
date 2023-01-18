@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
 class Item {
-  //String id;
+  late String itemID;
   final String sellerID;
   final String title;
   final DateTime timestamp;
@@ -12,7 +12,7 @@ class Item {
   final List<String>? bids;
 
   Item(
-      {//this.id = '',
+      {
       required this.sellerID,
       required this.title,
       required this.timestamp,
@@ -22,7 +22,6 @@ class Item {
       this.bids});
 
   Map<String, dynamic> toJson() => {
-        //'id': id,
         'sellerID': sellerID,
         'title': title,
         'createdDate': timestamp,
@@ -33,7 +32,6 @@ class Item {
       };
 
   static Item fromJson(Map<String, dynamic> json) => Item(
-        //id: json['id'],
         sellerID: json['sellerID'],
         title: json['title'],
         timestamp: (json['createdDate'] as Timestamp).toDate(),

@@ -1,10 +1,13 @@
 import 'package:drop_application/presentation/authentication/authenticate.dart';
 import 'package:drop_application/presentation/authentication/sign_in.dart';
 import 'package:drop_application/presentation/authentication/sign_up.dart';
+import 'package:drop_application/presentation/pages/auction.dart';
 import 'package:drop_application/presentation/pages/dashboard.dart';
 import 'package:drop_application/presentation/routing/skeleton.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+
+import '../../data/models/item.dart';
 
 final _parentKey = GlobalKey<NavigatorState>();
 final _shellKey = GlobalKey<NavigatorState>();
@@ -32,6 +35,15 @@ final router = GoRouter(
       path: '/dashboard',
       parentNavigatorKey: _parentKey,
       builder: (context, state) => const Dashboard(),
+    ),
+    GoRoute(
+      path: '/auction',
+      name: 'auction',
+      parentNavigatorKey: _parentKey,
+      builder: (context, state) {
+        Item item = state.extra as Item;
+        return Auction(item: item);
+      },
     ),
     /*ShellRoute(
       navigatorKey: _shellKey,
