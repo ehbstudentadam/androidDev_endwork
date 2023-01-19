@@ -1,4 +1,4 @@
-import 'package:drop_application/bloc/item/item_bloc.dart';
+import 'package:drop_application/bloc/auction/auction_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -14,9 +14,9 @@ class ItemPanel extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(12.0),
       child: InkWell(
-        onTap: (){
-          context.read<ItemBloc>().add(LoadItemEvent(item));
-          return GoRouter.of(context).push('/auction', extra: item);
+        onTap: () {
+          context.read<AuctionBloc>().add(LoadAuctionEvent(item));
+          GoRouter.of(context).push('/auction', extra: item);
         },
         child: Container(
           decoration: const BoxDecoration(

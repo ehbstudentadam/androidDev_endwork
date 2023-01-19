@@ -6,10 +6,9 @@ abstract class ItemEvent extends Equatable {
   List<Object> get props => [];
 }
 
-class LoadAllItemsEvent extends ItemEvent{
-}
+class LoadAllItemsEvent extends ItemEvent {}
 
-class CreateItemEvent extends ItemEvent {
+/*class CreateItemEvent extends ItemEvent {
   final String title;
   final DateTime timestamp;
   final String description;
@@ -18,12 +17,15 @@ class CreateItemEvent extends ItemEvent {
 
   CreateItemEvent(
       this.title, this.timestamp, this.description, this.price, this.images);
-}
+}*/
 
-class LoadItemEvent extends ItemEvent{
+class LoadItemEvent extends ItemEvent {
   final Item item;
 
   LoadItemEvent(this.item);
+
+  @override
+  List<Object> get props => [item];
 }
 
 class EditItemEvent extends ItemEvent {}

@@ -1,6 +1,3 @@
-import 'bid.dart';
-import 'item.dart';
-
 class DbUser {
   final String authUserID;
   final String userName;
@@ -9,8 +6,7 @@ class DbUser {
   final List<String>? bids;
 
   DbUser(
-      {
-      required this.authUserID,
+      {required this.authUserID,
       required this.userName,
       this.itemsForSale,
       this.itemFavourites,

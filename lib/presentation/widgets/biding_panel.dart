@@ -1,7 +1,6 @@
 import 'package:drop_application/bloc/bid/bid_bloc.dart';
 import 'package:drop_application/data/models/bid.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../data/models/item.dart';
 

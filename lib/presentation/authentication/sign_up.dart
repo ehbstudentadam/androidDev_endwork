@@ -30,7 +30,7 @@ class _SignUpState extends State<SignUp> {
         listener: (context, state) {
           if (state is Authenticated) {
             // Navigating to the dashboard screen if the user is authenticated
-            GoRouter.of(context).go('/dashboard');
+            GoRouter.of(context).pushReplacement('/dashboard');
           }
           if (state is AuthError) {
             // Displaying the error message if the user is not authenticated
@@ -122,7 +122,7 @@ class _SignUpState extends State<SignUp> {
                       ),
                       OutlinedButton(
                         onPressed: () {
-                          GoRouter.of(context).go('/sign_in');
+                          GoRouter.of(context).pushReplacement('/sign_in');
                         },
                         child: const Text("Sign In"),
                       ),

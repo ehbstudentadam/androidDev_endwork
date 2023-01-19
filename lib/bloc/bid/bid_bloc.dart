@@ -1,9 +1,8 @@
-import 'package:bloc/bloc.dart';
 import 'package:drop_application/data/models/bid.dart';
-import 'package:drop_application/data/models/db_user.dart';
 import 'package:drop_application/data/models/item.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../data/repository/auth_repository.dart';
 import '../../data/repository/firestore_repository.dart';
 part 'bid_event.dart';
@@ -19,12 +18,10 @@ class BidBloc extends Bloc<BidEvent, BidState> {
       (event, emit) async {
         emit(BidsLoadingState());
         try {
-          if (event.item != null) {
-            Item item = event.item!;
-            var bids =
-                firestoreRepository.getAllBidsByItemId(itemID: item.itemID);
-            emit(BidsLoadedState(bids));
-          }
+          Item item = event.item!;
+          var bids =
+              firestoreRepository.getAllBidsByItemId(itemID: item.itemID);
+          emit(BidsLoadedState(bids));
         } catch (e) {
           emit(BidErrorState(e.toString()));
         }
@@ -46,7 +43,5 @@ class BidBloc extends Bloc<BidEvent, BidState> {
         emit(BidErrorState(e.toString()));
       }
     });
-
-    add(LoadAllBidsEvent(null));
   }
 }

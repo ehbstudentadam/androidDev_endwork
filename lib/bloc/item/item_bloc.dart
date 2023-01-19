@@ -14,6 +14,20 @@ class ItemBloc extends Bloc<ItemEvent, ItemState> {
 
   ItemBloc({required this.firestoreRepository, required this.authRepository})
       : super(ItemsLoadingState()) {
+    on<LoadAllItemsEvent>((event, emit) async {
+      emit(ItemsLoadingState());
+      try {
+        var items = firestoreRepository.getAllItems();
+        emit(ItemsLoadedState(items));
+      } catch (e) {
+        emit(ItemErrorState(e.toString()));
+      }
+    });
+
+    add(LoadAllItemsEvent());
+  }
+}
+
 /*
     on<CreateItemEvent>((event, emit) async {
       emit(ItemsLoadingState());
@@ -29,30 +43,3 @@ class ItemBloc extends Bloc<ItemEvent, ItemState> {
         emit(ItemErrorState(e.toString()));
       }
     });*/
-
-    on<LoadAllItemsEvent>((event, emit) async {
-      emit(ItemsLoadingState());
-      try{
-        var items = firestoreRepository.getAllItems();
-        emit(ItemsLoadedState(items));
-      }catch(e){
-        emit(ItemErrorState(e.toString()));
-      }
-    });
-
-
-
-    on<LoadItemEvent>((event, emit) async {
-      emit(ItemsLoadingState());
-      try {
-        DbUser? databaseUser = await firestoreRepository.getDBUserByDBUserId(
-            dbUserID: event.item.sellerID);
-        emit(ItemLoadedState(event.item, databaseUser!));
-      } catch (e) {
-        emit(ItemErrorState(e.toString()));
-      }
-    });
-
-    add(LoadAllItemsEvent());
-  }
-}

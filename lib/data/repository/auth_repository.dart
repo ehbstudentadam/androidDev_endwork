@@ -51,9 +51,9 @@ class AuthRepository {
     try {
       if (_firebaseAuth.currentUser != null) {
         return _firebaseAuth.currentUser!.uid;
-      }
-      else {
-        throw Exception("Authenticated user has returned Null as authenticated user ID");
+      } else {
+        throw Exception(
+            "Authenticated user has returned Null as authenticated user ID");
       }
     } catch (e) {
       throw Exception(e);

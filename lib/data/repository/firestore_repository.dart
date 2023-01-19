@@ -201,8 +201,6 @@ class FirestoreRepository {
           .map((snapshot) =>
               snapshot.docs.map((doc) => Item.fromJson(doc.data())).toList());
 
-
-
   Stream<List<Bid>> getAllBidsByItemId({required String itemID}) async* {
     try {
       yield* _firestoreDB

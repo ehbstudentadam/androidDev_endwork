@@ -9,11 +9,9 @@ class StorageRepository {
   final FirestoreRepository firestoreRepository = FirestoreRepository();
 
   Future<String> uploadImage(
-      {
-      required String itemID,
+      {required String itemID,
       required PlatformFile file,
       required UploadTask uploadTask}) async {
-
     final path = "$itemID/${file.name}";
     final fileToUpload = File(file.path!);
 
@@ -31,7 +29,8 @@ class StorageRepository {
   }
 
   Future<String?> downloadURL(String itemID) async {
-    final Item? item = await firestoreRepository.getItemByItemId(itemID: itemID);
+    final Item? item =
+        await firestoreRepository.getItemByItemId(itemID: itemID);
     String? imageUrl = item?.images?.first;
     if (imageUrl == null) return null;
 

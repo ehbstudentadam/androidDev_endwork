@@ -8,10 +8,8 @@ class Bid {
   final double price;
   final DateTime timestamp;
 
-
   Bid(
-      {
-      required this.bidderID,
+      {required this.bidderID,
       required this.itemID,
       required this.price,
       required this.timestamp});

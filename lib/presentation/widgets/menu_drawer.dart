@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../bloc/auth/auth_bloc.dart';
 
 class MenuDrawer extends StatelessWidget {
   const MenuDrawer({super.key});
@@ -16,8 +14,7 @@ class MenuDrawer extends StatelessWidget {
               color: Colors.deepPurpleAccent,
               image: DecorationImage(
                 fit: BoxFit.fill,
-                image: AssetImage(
-                    'assets/images/drawer.jpg'),
+                image: AssetImage('assets/images/drawer.jpg'),
               ),
             ),
             child: Text(

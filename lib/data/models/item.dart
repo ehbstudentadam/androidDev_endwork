@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 
 class Item {
   late String itemID;
@@ -12,8 +11,7 @@ class Item {
   final List<String>? bids;
 
   Item(
-      {
-      required this.sellerID,
+      {required this.sellerID,
       required this.title,
       required this.timestamp,
       required this.description,

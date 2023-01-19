@@ -4,9 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_image_slideshow/flutter_image_slideshow.dart';
 import 'package:go_router/go_router.dart';
+import '../../bloc/auction/auction_bloc.dart';
 import '../../bloc/bid/bid_bloc.dart';
-import '../../bloc/item/item_bloc.dart';
-import '../../data/models/db_user.dart';
 import '../widgets/menu_drawer.dart';
 import '../widgets/user_drawer.dart';
 
@@ -22,11 +21,14 @@ class Auction extends StatelessWidget {
       endDrawer: const MenuDrawer(),
       body: MultiBlocListener(
         listeners: [
-          BlocListener<ItemBloc, ItemState>(
+          BlocListener<AuctionBloc, AuctionState>(
             listener: (context, state) {
-              if (state is ItemErrorState) {
+              if (state is AuctionErrorState) {
                 ScaffoldMessenger.of(context)
                     .showSnackBar(SnackBar(content: Text(state.error)));
+              }
+              if (state is AuctionLoadedState) {
+                context.read<BidBloc>().add(LoadAllBidsEvent(item));
               }
             },
           ),
@@ -39,15 +41,15 @@ class Auction extends StatelessWidget {
             },
           ),
         ],
-        child: BlocBuilder<ItemBloc, ItemState>(
+        child: BlocBuilder<AuctionBloc, AuctionState>(
           builder: (context, state) {
-            if (state is ItemsLoadingState) {
+            if (state is AuctionLoadingState) {
               // Showing the loading indicator while the user is signing in
               return const Center(
                 child: CircularProgressIndicator(),
               );
             }
-            if (state is ItemLoadedState) {
+            if (state is AuctionLoadedState) {
               return CustomScrollView(
                 slivers: [
                   SliverAppBar(

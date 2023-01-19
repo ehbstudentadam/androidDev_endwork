@@ -16,8 +16,7 @@ class UserDrawer extends StatelessWidget {
               color: Colors.deepPurpleAccent,
               image: DecorationImage(
                 fit: BoxFit.cover,
-                image: AssetImage(
-                    'assets/images/drawer.jpg'),
+                image: AssetImage('assets/images/drawer.jpg'),
               ),
             ),
             child: Text(

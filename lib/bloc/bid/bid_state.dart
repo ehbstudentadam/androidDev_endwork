@@ -3,7 +3,7 @@ part of 'bid_bloc.dart';
 @immutable
 abstract class BidState extends Equatable {}
 
-class BidsInitialState extends BidState{
+class BidsInitialState extends BidState {
   @override
   List<Object?> get props => [];
 }
