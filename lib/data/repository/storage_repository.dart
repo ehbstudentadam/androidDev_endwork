@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'package:drop_application/data/models/item.dart';
 import 'package:drop_application/data/repository/firestore_repository.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -8,42 +7,32 @@ class StorageRepository {
   final _storage = FirebaseStorage.instance;
   final FirestoreRepository firestoreRepository = FirestoreRepository();
 
-  Future<String> uploadImage(
+
+  Future<void> uploadImage(
       {required String itemID,
-      required PlatformFile file,
-      required UploadTask uploadTask}) async {
-    final path = "$itemID/${file.name}";
-    final fileToUpload = File(file.path!);
+      required List<PlatformFile> filePickerResult}) async {
+    try {
+      List<PlatformFile> files = filePickerResult;
 
-    final reference = _storage.ref().child(path);
-    uploadTask = reference.putFile(fileToUpload);
+      for (var file in files) {
+        final path = "auctions/$itemID/${file.name}";
+        final fileToUpload = File(file.path!);
 
-    final snapshot = await uploadTask.whenComplete(() {});
+        //todo Compressing with package https://pub.dev/packages/flutter_image_compress
 
-    final urlDownload = await snapshot.ref.getDownloadURL();
+        final reference = _storage.ref().child(path);
+        var uploadTask = reference.putFile(fileToUpload);
 
-    firestoreRepository.addImageToItem(
-        itemID: itemID, imageDownloadLink: urlDownload);
+        final snapshot = await uploadTask.whenComplete(() {});
 
-    return urlDownload;
+        final urlDownload = await snapshot.ref.getDownloadURL();
+
+        firestoreRepository.linkImageToItem(
+            itemID: itemID, imageDownloadLink: urlDownload);
+      }
+    } catch (e) {
+      throw Exception(e);
+    }
   }
-
-  Future<String?> downloadURL(String itemID) async {
-    final Item? item =
-        await firestoreRepository.getItemByItemId(itemID: itemID);
-    String? imageUrl = item?.images?.first;
-    if (imageUrl == null) return null;
-
-    //String downloadUrl = await _storage.ref("$itemID/$imageUrl")
-  }
-
-/*  Future<void> selectFile() async {
-    final result = await FilePicker.platform.pickFiles();
-    if (result == null) return;
-
-    setState((){
-      pickedFile = result.files.first;
-    });
-  }*/
 
 }

@@ -7,6 +7,7 @@ import '../../data/models/item.dart';
 class BiddingPanel extends StatelessWidget {
   final _formKey = GlobalKey<FormState>();
   final _bidController = TextEditingController();
+
   final Item item;
 
   BiddingPanel({Key? key, required this.item}) : super(key: key);

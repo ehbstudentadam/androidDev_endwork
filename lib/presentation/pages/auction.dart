@@ -42,6 +42,8 @@ class Auction extends StatelessWidget {
           ),
         ],
         child: BlocBuilder<AuctionBloc, AuctionState>(
+          buildWhen: (previous, current) =>
+              current is AuctionLoadedState && previous != current,
           builder: (context, state) {
             if (state is AuctionLoadingState) {
               // Showing the loading indicator while the user is signing in
@@ -82,6 +84,8 @@ class Auction extends StatelessWidget {
                             if (GoRouter.of(context).location == '/dashboard' ||
                                 GoRouter.of(context).location == '/') {
                               //do nothing
+                            } else {
+                              GoRouter.of(context).go('/');
                             }
                           }),
                       IconButton(
@@ -141,7 +145,7 @@ class Auction extends StatelessWidget {
                       ),
                       SizedBox(
                         width: double.infinity,
-                        height: 300,
+                        height: 200,
                         child: BiddingPanel(
                           item: item,
                         ),

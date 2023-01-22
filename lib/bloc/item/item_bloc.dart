@@ -1,7 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../data/models/db_user.dart';
 import '../../data/models/item.dart';
 import '../../data/repository/auth_repository.dart';
 import '../../data/repository/firestore_repository.dart';
@@ -14,6 +13,7 @@ class ItemBloc extends Bloc<ItemEvent, ItemState> {
 
   ItemBloc({required this.firestoreRepository, required this.authRepository})
       : super(ItemsLoadingState()) {
+
     on<LoadAllItemsEvent>((event, emit) async {
       emit(ItemsLoadingState());
       try {
@@ -24,22 +24,57 @@ class ItemBloc extends Bloc<ItemEvent, ItemState> {
       }
     });
 
-    add(LoadAllItemsEvent());
-  }
-}
-
-/*
-    on<CreateItemEvent>((event, emit) async {
+    on<SearchItemByNameEvent>((event, emit) async {
       emit(ItemsLoadingState());
       try {
-        await firestoreRepository.createItem(
-            dbUserId: await firestoreRepository.getDBUserByAuthUserId(authUserId: await authRepository.getCurrentAuthenticatedUserId()),
-            title: event.title,
-            description: event.description,
-            price: event.price);
-        var items = await firestoreRepository.getAllItems().toList();
-        //emit(ItemsLoadedState(items));
+        var items = firestoreRepository.searchItemsByName(event.name);
+        emit(ItemsLoadedState(items));
+      } catch (e) {
+        emit(ItemErrorState(e.toString()));
+      }
+    });
+
+    on<GetAllItemsFromCurrentUserEvent>((event, emit) async {
+      emit(ItemsLoadingState());
+      try {
+        String authUserId =
+            await authRepository.getCurrentAuthenticatedUserId();
+        String dbUserId = await firestoreRepository.getDBUserIdByAuthUserId(
+            authUserId: authUserId);
+        var items = firestoreRepository.searchItemsByDbUserId(dbUserId);
+        emit(MyItemsLoadedState(items));
+      } catch (e) {
+        emit(ItemErrorState(e.toString()));
+      }
+    });
+
+    on<SearchItemsFromCurrentUserEvent>((event, emit) async {
+      emit(ItemsLoadingState());
+      try {
+        String authUserId =
+        await authRepository.getCurrentAuthenticatedUserId();
+        String dbUserId = await firestoreRepository.getDBUserIdByAuthUserId(
+            authUserId: authUserId);
+        var items = firestoreRepository.searchItemsByDbUserIdAndItemName(dbUserId, event.name);
+        emit(ItemsLoadedState(items));
+      } catch (e) {
+        emit(ItemErrorState(e.toString()));
+      }
+    });
+
+/*    on<ChangePageEvent>((event, emit) async {
+      //emit(ItemsLoadingState());
+      try {
+        emit(ChangePageState(event.pageName));
+        if (event.pageName == "/my_auctions"){
+          add(GetAllItemsFromCurrentUserEvent());
+        }
+
       } catch (e) {
         emit(ItemErrorState(e.toString()));
       }
     });*/
+
+    add(LoadAllItemsEvent());
+  }
+}

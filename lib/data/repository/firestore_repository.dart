@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:drop_application/data/models/bid.dart';
 import 'package:drop_application/data/models/db_user.dart';
@@ -17,8 +16,8 @@ class FirestoreRepository {
       final json = dbUser.toJson();
 
       await docUser.set(json);
-    } on Exception catch (e) {
-      e.toString();
+    } catch (e) {
+      throw Exception(e);
     }
   }
 
@@ -56,33 +55,37 @@ class FirestoreRepository {
     }
   }
 
-  Future<void> createItem(
-      {required String dbUserId,
-      required String title,
-      required String description,
-      required double price}) async {
+  Future<String> createItem(
+      {required Item item}) async {
     try {
       final docItem = _firestoreDB.collection('items').doc();
-      final item = Item(
-          sellerID: dbUserId,
-          title: title,
-          timestamp: DateTime.now(),
-          description: description,
-          price: price);
       final json = item.toJson();
-
       await docItem.set(json);
-    } on Exception catch (e) {
-      e.toString();
+
+      String itemIdJustCreated = docItem.id;
+
+      final docUser = _firestoreDB.collection('users').doc(item.sellerID);
+      docUser.update({
+        'itemsForSale': FieldValue.arrayUnion([itemIdJustCreated].toList()),
+      });
+
+      return itemIdJustCreated;
+
+    } catch (e) {
+      throw Exception(e);
     }
   }
 
-  Future<void> addImageToItem(
+  Future<void> linkImageToItem(
       {required String itemID, required String imageDownloadLink}) async {
-    final docItem = _firestoreDB.collection('item').doc(itemID);
-    docItem.update({
-      'images': FieldValue.arrayUnion([imageDownloadLink])
-    });
+    try {
+      final docItem = _firestoreDB.collection('items').doc(itemID);
+      docItem.update({
+        'images': FieldValue.arrayUnion([imageDownloadLink].toList()),
+      });
+    } catch (e) {
+      throw Exception(e);
+    }
   }
 
   Future<String> getDbUserNameFromDbUserID({required String dbUserID}) async {
@@ -239,6 +242,51 @@ class FirestoreRepository {
                 item.itemID = doc.id;
                 return item;
               }).toList());
+    } catch (e) {
+      throw Exception(e);
+    }
+  }
+
+  Stream<List<Item>> searchItemsByName(String search) {
+    try {
+      return _firestoreDB
+          .collection('items').where('title', isEqualTo: search)
+          .snapshots()
+          .map((snapshot) => snapshot.docs.map((doc) {
+        Item item = Item.fromJson(doc.data());
+        item.itemID = doc.id;
+        return item;
+      }).toList());
+    } catch (e) {
+      throw Exception(e);
+    }
+  }
+
+  Stream<List<Item>> searchItemsByDbUserId(String dbUserId) {
+    try {
+      return _firestoreDB
+          .collection('items').where('sellerID', isEqualTo: dbUserId)
+          .snapshots()
+          .map((snapshot) => snapshot.docs.map((doc) {
+        Item item = Item.fromJson(doc.data());
+        item.itemID = doc.id;
+        return item;
+      }).toList());
+    } catch (e) {
+      throw Exception(e);
+    }
+  }
+
+  Stream<List<Item>> searchItemsByDbUserIdAndItemName(String dbUserId, String search) {
+    try {
+      return _firestoreDB
+          .collection('items').where('sellerID', isEqualTo: dbUserId).where('title', isEqualTo: search)
+          .snapshots()
+          .map((snapshot) => snapshot.docs.map((doc) {
+        Item item = Item.fromJson(doc.data());
+        item.itemID = doc.id;
+        return item;
+      }).toList());
     } catch (e) {
       throw Exception(e);
     }

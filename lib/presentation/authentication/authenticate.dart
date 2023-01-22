@@ -17,7 +17,7 @@ class _AuthenticateState extends State<Authenticate> {
       stream: FirebaseAuth.instance.authStateChanges(),
       builder: (context, snapshot) {
         if (snapshot.hasData) {
-          return const Dashboard();
+          return Dashboard();
         } else {
           return const SignIn();
         }

@@ -3,6 +3,8 @@ import 'package:drop_application/presentation/authentication/sign_in.dart';
 import 'package:drop_application/presentation/authentication/sign_up.dart';
 import 'package:drop_application/presentation/pages/auction.dart';
 import 'package:drop_application/presentation/pages/dashboard.dart';
+import 'package:drop_application/presentation/pages/my_auctions.dart';
+import 'package:drop_application/presentation/pages/new_auction.dart';
 import 'package:drop_application/presentation/routing/skeleton.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -34,7 +36,7 @@ final router = GoRouter(
     GoRoute(
       path: '/dashboard',
       parentNavigatorKey: _parentKey,
-      builder: (context, state) => const Dashboard(),
+      builder: (context, state) => const Authenticate(),
     ),
     GoRoute(
       path: '/auction',
@@ -44,6 +46,18 @@ final router = GoRouter(
         Item item = state.extra as Item;
         return Auction(item: item);
       },
+    ),
+    GoRoute(
+      path: '/new_auction',
+      name: 'new_auction',
+      parentNavigatorKey: _parentKey,
+      builder: (context, state) => NewAuction(),
+    ),
+    GoRoute(
+      path: '/my_auctions',
+      name: 'my_auctions',
+      parentNavigatorKey: _parentKey,
+      builder: (context, state) => MyAuctions(),
     ),
     /*ShellRoute(
       navigatorKey: _shellKey,

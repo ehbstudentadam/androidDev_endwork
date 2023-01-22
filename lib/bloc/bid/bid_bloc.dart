@@ -32,11 +32,11 @@ class BidBloc extends Bloc<BidEvent, BidState> {
       try {
         String authUserId =
             await authRepository.getCurrentAuthenticatedUserId();
-        String dbUser = await firestoreRepository.getDBUserIdByAuthUserId(
+        String dbUserId = await firestoreRepository.getDBUserIdByAuthUserId(
             authUserId: authUserId);
 
         await firestoreRepository.createBid(
-            bidderID: dbUser, itemID: event.item.itemID, price: event.price);
+            bidderID: dbUserId, itemID: event.item.itemID, price: event.price);
 
         add(LoadAllBidsEvent(event.item));
       } catch (e) {

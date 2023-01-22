@@ -1,4 +1,8 @@
+import 'package:drop_application/bloc/item/item_bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+import '../../bloc/auction/auction_bloc.dart';
 
 class MenuDrawer extends StatelessWidget {
   const MenuDrawer({super.key});
@@ -25,17 +29,28 @@ class MenuDrawer extends StatelessWidget {
           ListTile(
             leading: const Icon(Icons.sell),
             title: const Text('My Auctions'),
-            onTap: () => {},
+            onTap: () {
+              //context.read<ItemBloc>().add(ChangePageEvent('/my_auctions'));
+              context.read<ItemBloc>().add(GetAllItemsFromCurrentUserEvent());
+              GoRouter.of(context).push('/my_auctions');
+              Navigator.of(context).pop();
+            },
           ),
           ListTile(
             leading: const Icon(Icons.post_add),
             title: const Text('New Auction'),
-            onTap: () => {Navigator.of(context).pop()},
+            onTap: () {
+              context.read<AuctionBloc>().add(NewAuctionEvent());
+              GoRouter.of(context).push('/new_auction');
+              Navigator.of(context).pop();
+            },
           ),
           ListTile(
             leading: const Icon(Icons.history),
             title: const Text('My bids'),
-            onTap: () => {Navigator.of(context).pop()},
+            onTap: () {
+              //todo
+            },
           ),
           ListTile(
             leading: const Icon(Icons.favorite),

@@ -5,7 +5,6 @@ abstract class AuctionState extends Equatable {}
 
 class AuctionInitial extends AuctionState {
   @override
-  // TODO: implement props
   List<Object?> get props => [];
 }
 
@@ -22,6 +21,26 @@ class AuctionLoadedState extends AuctionState {
 
   @override
   List<Object?> get props => [item];
+}
+
+class NewAuctionLoadingState extends AuctionState {
+  @override
+  List<Object?> get props => [];
+}
+
+class NewAuctionLoadedState extends AuctionState {
+  @override
+  List<Object?> get props => [];
+}
+
+class PostNewAuctionLoadingState extends AuctionState {
+  @override
+  List<Object?> get props => [];
+}
+
+class PostNewAuctionLoadedState extends AuctionState {
+  @override
+  List<Object?> get props => [];
 }
 
 class AuctionErrorState extends AuctionState {

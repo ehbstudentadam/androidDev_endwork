@@ -3,22 +3,24 @@ import 'package:drop_application/data/models/item.dart';
 import 'package:drop_application/presentation/widgets/item_panel.dart';
 import 'package:drop_application/presentation/widgets/menu_drawer.dart';
 import 'package:drop_application/presentation/widgets/user_drawer.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import '../../bloc/auth/auth_bloc.dart';
 import '../../bloc/item/item_bloc.dart';
 
-
-class Dashboard extends StatelessWidget {
+class MyAuctions extends StatelessWidget {
   final _formKey = GlobalKey<FormState>();
   final _searchController = TextEditingController();
   final List<String> _resultNames = [];
 
-  Dashboard({Key? key}) : super(key: key);
+  MyAuctions({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    // Getting the user from the FirebaseAuth Instance
+    final user = FirebaseAuth.instance.currentUser!;
     return Scaffold(
       drawer: const UserDrawer(),
       endDrawer: const MenuDrawer(),
@@ -40,16 +42,9 @@ class Dashboard extends StatelessWidget {
               }
             },
           ),
-          BlocListener<ItemBloc, ItemState>(
-            listener: (context, state) {
-              if (state is ChangePageState) {
-                GoRouter.of(context).push(state.pageName);
-              }
-            },
-          ),
         ],
         child: BlocBuilder<ItemBloc, ItemState>(
-          buildWhen: (previous, current) => previous != current && current is ItemsLoadedState,
+          buildWhen: (previous, current) => previous != current && current is MyItemsLoadedState,
           builder: (context, state) {
             if (state is ItemsLoadingState) {
               // Showing the loading indicator while the user is signing in
@@ -57,7 +52,7 @@ class Dashboard extends StatelessWidget {
                 child: CircularProgressIndicator(),
               );
             }
-            if (state is ItemsLoadedState) {
+            if (state is MyItemsLoadedState) {
               return CustomScrollView(
                 slivers: [
                   SliverAppBar(
@@ -92,6 +87,10 @@ class Dashboard extends StatelessWidget {
                                     .add(LoadAllItemsEvent());
                               }
                             }
+                            if (GoRouter.of(context).location == '/my_auctions') {
+                              context.read<ItemBloc>().add(LoadAllItemsEvent());
+                              GoRouter.of(context).go('/');
+                            }
                           }),
                       IconButton(
                           icon: const Icon(Icons.menu),
@@ -111,7 +110,7 @@ class Dashboard extends StatelessWidget {
                       title: AnimationSearchBar(
                         closeIconColor: Colors.white,
                         isBackButtonVisible: false,
-                        centerTitle: 'Dashboard',
+                        centerTitle: 'My Auctions',
                         centerTitleStyle: const TextStyle(
                             fontWeight: FontWeight.w500,
                             color: Colors.white,
@@ -121,7 +120,7 @@ class Dashboard extends StatelessWidget {
                         onSubmitted: (value) {
                           context
                               .read<ItemBloc>()
-                              .add(SearchItemByNameEvent(value));
+                              .add(SearchItemsFromCurrentUserEvent(value));
                         },
                         searchTextEditingController: _searchController,
                         searchFieldDecoration: BoxDecoration(
@@ -176,9 +175,6 @@ class Dashboard extends StatelessWidget {
                       })
                 ],
               );
-            }
-            if (state is MyItemsLoadedState) {
-              GoRouter.of(context).push('/my_auctions');
             }
             return Container();
           },

@@ -15,6 +15,25 @@ class LoadAuctionEvent extends AuctionEvent {
   List<Object> get props => [item];
 }
 
+class NewAuctionEvent extends AuctionEvent{
+
+  @override
+  List<Object> get props => [];
+}
+
+class PostNewAuctionEvent extends AuctionEvent{
+  final String auctionName;
+  final double auctionPrice;
+  final String auctionDescription;
+  final List<PlatformFile> filePickerResults;
+
+  PostNewAuctionEvent(
+      this.auctionName, this.auctionPrice, this.auctionDescription, this.filePickerResults);
+
+  @override
+  List<Object> get props => [auctionName, auctionPrice, auctionDescription];
+}
+
 class EditAuctionEvent extends AuctionEvent {}
 
 class RemoveAuctionEvent extends AuctionEvent {}

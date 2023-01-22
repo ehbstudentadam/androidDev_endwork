@@ -55,6 +55,8 @@ class MyApp extends StatelessWidget {
           BlocProvider(
             create: (context) => AuctionBloc(
               firestoreRepository: RepositoryProvider.of(context),
+              authRepository: RepositoryProvider.of(context),
+              storageRepository: RepositoryProvider.of(context)
             ),
           ),
         ],
