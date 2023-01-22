@@ -21,6 +21,8 @@ class BiddingPanel extends StatelessWidget {
               .showSnackBar(SnackBar(content: Text(state.error)));
         }
       },
+      buildWhen: (previous, current) =>
+          current is BidsLoadedState && previous != current,
       builder: (context, state) {
         if (state is BidsLoadingState) {
           context.read<BidBloc>().add(LoadAllBidsEvent(item));

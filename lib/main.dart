@@ -44,6 +44,7 @@ class MyApp extends StatelessWidget {
             create: (context) => ItemBloc(
               firestoreRepository: RepositoryProvider.of(context),
               authRepository: RepositoryProvider.of(context),
+              storageRepository: RepositoryProvider.of(context),
             ),
           ),
           BlocProvider(
@@ -54,10 +55,9 @@ class MyApp extends StatelessWidget {
           ),
           BlocProvider(
             create: (context) => AuctionBloc(
-              firestoreRepository: RepositoryProvider.of(context),
-              authRepository: RepositoryProvider.of(context),
-              storageRepository: RepositoryProvider.of(context)
-            ),
+                firestoreRepository: RepositoryProvider.of(context),
+                authRepository: RepositoryProvider.of(context),
+                storageRepository: RepositoryProvider.of(context)),
           ),
         ],
         child: MaterialApp.router(

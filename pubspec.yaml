@@ -48,6 +48,7 @@ dependencies:
   flutter_svg: ^1.1.6
   flutter_image_slideshow: ^0.1.4
   animation_search_bar: ^0.0.10
+  cool_alert: ^1.1.0
 
 dev_dependencies:
   flutter_test:

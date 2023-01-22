@@ -11,7 +11,6 @@ import '../../bloc/item/item_bloc.dart';
 
 
 class Dashboard extends StatelessWidget {
-  final _formKey = GlobalKey<FormState>();
   final _searchController = TextEditingController();
   final List<String> _resultNames = [];
 
@@ -37,13 +36,6 @@ class Dashboard extends StatelessWidget {
               if (state is ItemErrorState) {
                 ScaffoldMessenger.of(context)
                     .showSnackBar(SnackBar(content: Text(state.error)));
-              }
-            },
-          ),
-          BlocListener<ItemBloc, ItemState>(
-            listener: (context, state) {
-              if (state is ChangePageState) {
-                GoRouter.of(context).push(state.pageName);
               }
             },
           ),
@@ -133,12 +125,11 @@ class Dashboard extends StatelessWidget {
                       ),
                     ),
                   ),
-                  // Other Sliver Widgets
                   StreamBuilder<List<Item>>(
                       stream: state.items,
                       builder: (context, snapshot) {
                         if (snapshot.hasError) {
-                          // todo
+                          throw snapshot.error!;
                         }
                         if (snapshot.hasData) {
                           if (snapshot.data!.isEmpty) {

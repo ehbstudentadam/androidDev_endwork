@@ -3,7 +3,6 @@ import 'package:drop_application/data/models/item.dart';
 import 'package:drop_application/presentation/widgets/item_panel.dart';
 import 'package:drop_application/presentation/widgets/menu_drawer.dart';
 import 'package:drop_application/presentation/widgets/user_drawer.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -11,7 +10,6 @@ import '../../bloc/auth/auth_bloc.dart';
 import '../../bloc/item/item_bloc.dart';
 
 class MyAuctions extends StatelessWidget {
-  final _formKey = GlobalKey<FormState>();
   final _searchController = TextEditingController();
   final List<String> _resultNames = [];
 
@@ -19,8 +17,6 @@ class MyAuctions extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Getting the user from the FirebaseAuth Instance
-    final user = FirebaseAuth.instance.currentUser!;
     return Scaffold(
       drawer: const UserDrawer(),
       endDrawer: const MenuDrawer(),
@@ -39,6 +35,10 @@ class MyAuctions extends StatelessWidget {
               if (state is ItemErrorState) {
                 ScaffoldMessenger.of(context)
                     .showSnackBar(SnackBar(content: Text(state.error)));
+              }
+              if (state is DeletingItemState) {
+                ScaffoldMessenger.of(context)
+                    .showSnackBar(const SnackBar(content: Text('Deleting auction...')));
               }
             },
           ),

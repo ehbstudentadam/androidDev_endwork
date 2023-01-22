@@ -55,8 +55,7 @@ class FirestoreRepository {
     }
   }
 
-  Future<String> createItem(
-      {required Item item}) async {
+  Future<String> createItem({required Item item}) async {
     try {
       final docItem = _firestoreDB.collection('items').doc();
       final json = item.toJson();
@@ -70,6 +69,38 @@ class FirestoreRepository {
       });
 
       return itemIdJustCreated;
+    } catch (e) {
+      throw Exception(e);
+    }
+  }
+
+  Future<void> deleteItem({required Item item}) async {
+    try {
+      final docItem = _firestoreDB.collection('items').doc(item.itemID);
+
+      await docItem.delete().whenComplete(() async {
+        //Delete linked bids
+        if (item.bids != null) {
+          for (var bidId in item.bids!) {
+            final docBid = _firestoreDB.collection('bids').doc(bidId);
+          }
+        }
+
+        //Delete link with dbUser
+        final docUser = _firestoreDB
+            .collection('users')
+            .where('bids', arrayContains: item.itemID);
+        final snapshot = await docUser.get();
+
+        // Iterate through the documents in the snapshot
+        for (var doc in snapshot.docs) {
+          if (doc.exists) {
+            doc.reference.update({
+              'bids': FieldValue.arrayRemove([item.itemID].toList())
+            });
+          }
+        }
+      });
 
     } catch (e) {
       throw Exception(e);
@@ -250,43 +281,49 @@ class FirestoreRepository {
   Stream<List<Item>> searchItemsByName(String search) {
     try {
       return _firestoreDB
-          .collection('items').where('title', isEqualTo: search)
+          .collection('items')
+          .where('title', isEqualTo: search)
           .snapshots()
           .map((snapshot) => snapshot.docs.map((doc) {
-        Item item = Item.fromJson(doc.data());
-        item.itemID = doc.id;
-        return item;
-      }).toList());
+                Item item = Item.fromJson(doc.data());
+                item.itemID = doc.id;
+                return item;
+              }).toList());
     } catch (e) {
       throw Exception(e);
     }
   }
 
-  Stream<List<Item>> searchItemsByDbUserId(String dbUserId) {
+  Stream<List<Item>> searchMyItemsByDbUserId(String dbUserId) {
     try {
       return _firestoreDB
-          .collection('items').where('sellerID', isEqualTo: dbUserId)
+          .collection('items')
+          .where('sellerID', isEqualTo: dbUserId)
           .snapshots()
           .map((snapshot) => snapshot.docs.map((doc) {
-        Item item = Item.fromJson(doc.data());
-        item.itemID = doc.id;
-        return item;
-      }).toList());
+                Item item = Item.fromJson(doc.data());
+                item.itemID = doc.id;
+                item.isMyItem = true;
+                return item;
+              }).toList());
     } catch (e) {
       throw Exception(e);
     }
   }
 
-  Stream<List<Item>> searchItemsByDbUserIdAndItemName(String dbUserId, String search) {
+  Stream<List<Item>> searchItemsByDbUserIdAndItemName(
+      String dbUserId, String search) {
     try {
       return _firestoreDB
-          .collection('items').where('sellerID', isEqualTo: dbUserId).where('title', isEqualTo: search)
+          .collection('items')
+          .where('sellerID', isEqualTo: dbUserId)
+          .where('title', isEqualTo: search)
           .snapshots()
           .map((snapshot) => snapshot.docs.map((doc) {
-        Item item = Item.fromJson(doc.data());
-        item.itemID = doc.id;
-        return item;
-      }).toList());
+                Item item = Item.fromJson(doc.data());
+                item.itemID = doc.id;
+                return item;
+              }).toList());
     } catch (e) {
       throw Exception(e);
     }

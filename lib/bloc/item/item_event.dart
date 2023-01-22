@@ -8,15 +8,6 @@ abstract class ItemEvent extends Equatable {
 
 class LoadAllItemsEvent extends ItemEvent {}
 
-/*class LoadItemEvent extends ItemEvent {
-  final Item item;
-
-  LoadItemEvent(this.item);
-
-  @override
-  List<Object> get props => [item];
-}*/
-
 class SearchItemByNameEvent extends ItemEvent {
   final String name;
 
@@ -35,17 +26,15 @@ class SearchItemsFromCurrentUserEvent extends ItemEvent {
   List<Object> get props => [name];
 }
 
-class ChangePageEvent extends ItemEvent {
-  final String pageName;
-
-  ChangePageEvent(this.pageName);
-
-  @override
-  List<Object> get props => [pageName];
-}
-
 class GetAllItemsFromCurrentUserEvent extends ItemEvent {}
 
 class EditItemEvent extends ItemEvent {}
 
-class DeleteItemEvent extends ItemEvent {}
+class DeleteItemEvent extends ItemEvent {
+  final Item item;
+
+  DeleteItemEvent(this.item);
+
+  @override
+  List<Object> get props => [item];
+}

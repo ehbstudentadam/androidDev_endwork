@@ -1,7 +1,9 @@
+import 'package:cool_alert/cool_alert.dart';
 import 'package:drop_application/bloc/auction/auction_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import '../../bloc/item/item_bloc.dart';
 import '../../data/models/item.dart';
 
 class ItemPanel extends StatelessWidget {
@@ -74,14 +76,53 @@ class ItemPanel extends StatelessWidget {
                             item.price.toString(),
                             style: Theme.of(context).textTheme.headline6,
                           ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: IconButton(
-                                icon: const Icon(Icons.favorite),
-                                onPressed: () {
-                                  //code to execute when this button is pressed
-                                }),
-                          ),
+                          Builder(builder: (context) {
+                            if (item.isMyItem == true) {
+                              return Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: DropdownButtonHideUnderline(
+                                  child: DropdownButton(
+                                    borderRadius: const BorderRadius.all(Radius.circular(8.0)),
+
+                                    items: const [
+                                      DropdownMenuItem(
+                                        value: 1,
+                                        child: Icon(Icons.delete),
+                                      ),
+                                      DropdownMenuItem(
+                                        value: 2,
+                                        child: Icon(Icons.edit),
+                                      )
+                                    ],
+                                    icon: const Icon(Icons.settings),
+                                    onChanged: (value) {
+                                      if(value == 1){
+                                        CoolAlert.show(
+                                          context: context,
+                                          type: CoolAlertType.confirm,
+                                          text: "Are you sure you want to delete ${item.title}?",
+                                          confirmBtnText: "Delete",
+                                          cancelBtnText: "Cancel",
+                                          onConfirmBtnTap: () {
+                                            context.read<ItemBloc>().add(DeleteItemEvent(item));
+                                            Navigator.of(context).pop();
+                                          });
+                                      }
+                                    },
+                                  ),
+                                ),
+                              );
+                            } else {
+                              return Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: IconButton(
+                                    icon: const Icon(Icons.favorite),
+                                    onPressed: () {
+                                      //todo
+                                    }),
+                              );
+                            }
+                          })
                         ],
                       )
                     ],

@@ -7,7 +7,6 @@ class StorageRepository {
   final _storage = FirebaseStorage.instance;
   final FirestoreRepository firestoreRepository = FirestoreRepository();
 
-
   Future<void> uploadImage(
       {required String itemID,
       required List<PlatformFile> filePickerResult}) async {
@@ -35,4 +34,15 @@ class StorageRepository {
     }
   }
 
+  Future<void> deleteAllImagesFromItem({required String itemId}) async {
+    try {
+      _storage.ref("auctions/$itemId").listAll().then((value) {
+        for (var element in value.items) {
+          FirebaseStorage.instance.ref(element.fullPath).delete();
+        }
+      });
+    } catch (e) {
+      throw Exception(e);
+    }
+  }
 }

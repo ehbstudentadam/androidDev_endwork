@@ -9,6 +9,8 @@ class Item {
   final double price;
   final List<String>? images;
   final List<String>? bids;
+  bool toDelete = false;
+  bool isMyItem = false;
 
   Item(
       {required this.sellerID,
