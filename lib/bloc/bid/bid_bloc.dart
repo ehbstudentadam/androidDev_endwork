@@ -18,7 +18,7 @@ class BidBloc extends Bloc<BidEvent, BidState> {
       (event, emit) async {
         emit(BidsLoadingState());
         try {
-          Item item = event.item!;
+          Item item = event.item;
           var bids = firestoreRepository
               .getAllBidsByItemId(itemID: item.itemID)
               .asBroadcastStream();

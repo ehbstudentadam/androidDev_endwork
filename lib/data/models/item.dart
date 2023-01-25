@@ -38,7 +38,7 @@ class Item {
         timestamp: (json['createdDate'] as Timestamp).toDate(),
         description: json['description'],
         price: json['price'],
-        images: json?['images'] is Iterable ? List.from(json?['images']) : null,
-        bids: json?['bids'] is Iterable ? List.from(json?['bids']) : null,
+        images: json['images'] is Iterable ? List.from(json['images']) : null,
+        bids: json['bids'] is Iterable ? List.from(json['bids']) : null,
       );
 }
