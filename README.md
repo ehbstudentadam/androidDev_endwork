@@ -1,12 +1,12 @@
 # Project fluttereindwerk - DROP
 Flutter project voor mijn examen.
 Project voorstel:
->   Een 2eHands App.
->   Verwijderen van item
->   Plaatsen van item
->   Bieden op Item
->   Zoeken van Item
->   Inloggen Account
+   Een 2eHands App.
+   Verwijderen van item
+   Plaatsen van item
+   Bieden op Item
+   Zoeken van Item
+   Inloggen Account
 
 ## Table of Contents
 * [General Info](#general-information)
@@ -31,7 +31,6 @@ Je kan een auction aanmaken, bieden, opslaan in favourites, verwijderen etc...
 
 
 ## Features
-List the ready features here:
 - Creating auction
 - Deleting auction
 - Searching auction
