@@ -9,6 +9,7 @@ import '../widgets/user_drawer.dart';
 FilePickerResult? filePickerResults;
 
 class NewAuction extends StatelessWidget {
+
   final List<PlatformFile> filePickerResults = [];
 
   final _formKey = GlobalKey<FormState>();
@@ -180,6 +181,7 @@ class NewAuction extends StatelessWidget {
                                     "Auction title:",
                                     style:
                                         Theme.of(context).textTheme.headline4,
+
                                   ),
                                 ),
                                 SizedBox(
@@ -397,4 +399,6 @@ class NewAuction extends StatelessWidget {
       ),
     );
   }
+
+
 }

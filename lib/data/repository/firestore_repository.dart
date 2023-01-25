@@ -67,7 +67,6 @@ class FirestoreRepository {
       docUser.update({
         'itemsForSale': FieldValue.arrayUnion([itemIdJustCreated].toList()),
       });
-
       return itemIdJustCreated;
     } catch (e) {
       throw Exception(e);
@@ -77,31 +76,57 @@ class FirestoreRepository {
   Future<void> deleteItem({required Item item}) async {
     try {
       final docItem = _firestoreDB.collection('items').doc(item.itemID);
-
-      await docItem.delete().whenComplete(() async {
-        //Delete linked bids
-        if (item.bids != null) {
-          for (var bidId in item.bids!) {
-            final docBid = _firestoreDB.collection('bids').doc(bidId);
+      await docItem.delete().whenComplete(
+        () async {
+          //Delete linked bids
+          if (item.bids != null) {
+            for (var bidId in item.bids!) {
+              final docBid = _firestoreDB.collection('bids').doc(bidId);
+              await docBid.delete().whenComplete(() async {
+                //Delete bidId from dbUser
+                final docUser = _firestoreDB
+                    .collection('users')
+                    .where('bids', arrayContains: bidId);
+                final snapshot = await docUser.get();
+                // Iterate through the documents in the snapshot
+                for (var doc in snapshot.docs) {
+                  if (doc.exists) {
+                    doc.reference.update({
+                      'bids': FieldValue.arrayRemove([bidId].toList())
+                    });
+                  }
+                }
+              });
+            }
           }
-        }
-
-        //Delete link with dbUser
-        final docUser = _firestoreDB
-            .collection('users')
-            .where('bids', arrayContains: item.itemID);
-        final snapshot = await docUser.get();
-
-        // Iterate through the documents in the snapshot
-        for (var doc in snapshot.docs) {
-          if (doc.exists) {
-            doc.reference.update({
-              'bids': FieldValue.arrayRemove([item.itemID].toList())
-            });
+          //Delete itemId from dbUser
+          final docUser = _firestoreDB
+              .collection('users')
+              .where('itemsForSale', arrayContains: item.itemID);
+          final snapshot = await docUser.get();
+          // Iterate through the documents in the snapshot
+          for (var doc in snapshot.docs) {
+            if (doc.exists) {
+              doc.reference.update({
+                'itemsForSale': FieldValue.arrayRemove([item.itemID].toList())
+              });
+            }
           }
-        }
-      });
-
+          //Delete from favourites if present
+          final docUserF = _firestoreDB
+              .collection('users')
+              .where('itemFavourites', arrayContains: item.itemID);
+          final snapshotF = await docUserF.get();
+          // Iterate through the documents in the snapshot
+          for (var doc in snapshotF.docs) {
+            if (doc.exists) {
+              doc.reference.update({
+                'itemFavourites': FieldValue.arrayRemove([item.itemID].toList())
+              });
+            }
+          }
+        },
+      );
     } catch (e) {
       throw Exception(e);
     }
@@ -119,6 +144,30 @@ class FirestoreRepository {
     }
   }
 
+  Future<void> addItemToMyFavourites(
+      {required String itemId, required String dbUserId}) async {
+    try {
+      final docUser = _firestoreDB.collection('users').doc(dbUserId);
+      docUser.update({
+        'itemFavourites': FieldValue.arrayUnion([itemId].toList()),
+      });
+    } catch (e) {
+      throw Exception(e);
+    }
+  }
+
+  Future<void> removeItemFromMyFavourites(
+      {required String itemId, required String dbUserId}) async {
+    try {
+      final docUser = _firestoreDB.collection('users').doc(dbUserId);
+      docUser.update({
+        'itemFavourites': FieldValue.arrayRemove([itemId].toList())
+      });
+    } catch (e) {
+      throw Exception(e);
+    }
+  }
+
   Future<String> getDbUserNameFromDbUserID({required String dbUserID}) async {
     try {
       final docUser = _firestoreDB.collection('users').doc(dbUserID);
@@ -129,7 +178,20 @@ class FirestoreRepository {
           return DbUser.fromJson(snapshot.data()!).userName;
         }
       }
-      throw Exception("getDBUserByDBUserId() No fireStore userName found");
+      throw Exception("getDbUserNameFromDbUserID() No fireStore userName found");
+    } catch (e) {
+      throw Exception(e);
+    }
+  }
+
+  Future<void> updateDbUserNameFromDbUserID({required String dbUserID, required String newUserName}) async {
+    try {
+      final docUser = _firestoreDB.collection('users').doc(dbUserID);
+
+      docUser.update({
+        'userName': newUserName,
+      });
+
     } catch (e) {
       throw Exception(e);
     }
@@ -218,7 +280,7 @@ class FirestoreRepository {
     return null;
   }
 
-  Stream<List<Bid>> getAllBidsByDBUserId(
+/*  Stream<List<Bid>> getAllBidsByDBUserId(
           {required String dbUserID}) =>
       _firestoreDB
           .collection('bids')
@@ -233,7 +295,7 @@ class FirestoreRepository {
           .where('sellerID', isEqualTo: dbUserID)
           .snapshots()
           .map((snapshot) =>
-              snapshot.docs.map((doc) => Item.fromJson(doc.data())).toList());
+              snapshot.docs.map((doc) => Item.fromJson(doc.data())).toList());*/
 
   Stream<List<Bid>> getAllBidsByItemId({required String itemID}) async* {
     try {
@@ -263,7 +325,157 @@ class FirestoreRepository {
     }
   }
 
-  Stream<List<Item>> getAllItems() {
+  Future<bool> checkIfItemIdIsFavourite(
+      {required String itemId, required String dbUserId}) async {
+    try {
+      final docUser = _firestoreDB.collection('users').doc(dbUserId);
+      final snapshot = await docUser.get();
+
+      if (snapshot.exists) {
+        if (snapshot.data() != null) {
+          if (DbUser.fromJson(snapshot.data()!).itemFavourites != null) {
+            if (DbUser.fromJson(snapshot.data()!).itemFavourites!.isNotEmpty) {
+              if (DbUser.fromJson(snapshot.data()!)
+                  .itemFavourites!
+                  .contains(itemId)) {
+                return true;
+              }
+            }
+          }
+        }
+      }
+      return false;
+    } catch (e) {
+      throw Exception(e);
+    }
+  }
+
+  Stream<List<Item>> getAllItems({required String currentDbUser}) async* {
+    try {
+      yield* _firestoreDB
+          .collection('items')
+          .snapshots()
+          .asyncMap<List<Item>>((event) async {
+        List<Item> items = [];
+
+        for (var doc in event.docs) {
+          try {
+            Item item = Item.fromJson(doc.data());
+            item.itemID = doc.id;
+            item.isMyFavourite = await checkIfItemIdIsFavourite(
+                itemId: doc.id, dbUserId: currentDbUser);
+
+            items.add(item);
+          } catch (e) {
+            throw Exception(e);
+          }
+        }
+        return items;
+      });
+    } catch (e) {
+      throw Exception(e);
+    }
+  }
+
+  Stream<List<Item>> searchItemsByName(
+      {required String currentDbUser, required String searchName}) async* {
+    try {
+      yield* _firestoreDB
+          .collection('items')
+          .where('title', isEqualTo: searchName)
+          .snapshots()
+          .asyncMap<List<Item>>((event) async {
+        List<Item> items = [];
+
+        for (var doc in event.docs) {
+          try {
+            Item item = Item.fromJson(doc.data());
+            item.itemID = doc.id;
+            item.isMyFavourite = await checkIfItemIdIsFavourite(
+                itemId: doc.id, dbUserId: currentDbUser);
+
+            items.add(item);
+          } catch (e) {
+            throw Exception(e);
+          }
+        }
+        return items;
+      });
+    } catch (e) {
+      throw Exception(e);
+    }
+  }
+
+  Stream<List<Item>> getMyFavouriteItems2({required String dbUserId}) async* {
+    try {
+      final docUser = _firestoreDB.collection('users').doc(dbUserId);
+      final snapshot = await docUser.get();
+
+      DbUser dbUser;
+      if (snapshot.exists) {
+        if (DbUser.fromJson(snapshot.data()!).itemFavourites != null) {
+          if (DbUser.fromJson(snapshot.data()!).itemFavourites!.isNotEmpty) {
+            dbUser = DbUser.fromJson(snapshot.data()!);
+
+            List<Item> items = [];
+
+            for (var itemId in dbUser.itemFavourites!) {
+              final docItem = _firestoreDB.collection('items').doc(itemId);
+              final snapshot = await docItem.get();
+
+              if (snapshot.exists) {
+                Item item = Item.fromJson(snapshot.data()!);
+                item.itemID = snapshot.id;
+                item.isMyFavourite = await checkIfItemIdIsFavourite(
+                    itemId: snapshot.id, dbUserId: dbUserId);
+                items.add(item);
+              }
+            }
+            yield items;
+          }
+        }
+      }
+    } catch (e) {
+      throw Exception(e);
+    }
+  }
+
+  Future<List<Item>?> getMyFavouriteItems({required String dbUserId}) async {
+    try {
+      final docUser = _firestoreDB.collection('users').doc(dbUserId);
+      final snapshot = await docUser.get();
+
+      DbUser dbUser;
+      if (snapshot.exists) {
+        if (DbUser.fromJson(snapshot.data()!).itemFavourites != null) {
+          if (DbUser.fromJson(snapshot.data()!).itemFavourites!.isNotEmpty) {
+            dbUser = DbUser.fromJson(snapshot.data()!);
+
+            List<Item> items = [];
+
+            for (var itemId in dbUser.itemFavourites!) {
+              final docItem = _firestoreDB.collection('items').doc(itemId);
+              final snapshot = await docItem.get();
+
+              if (snapshot.exists) {
+                Item item = Item.fromJson(snapshot.data()!);
+                item.itemID = snapshot.id;
+                item.isMyFavourite = await checkIfItemIdIsFavourite(
+                    itemId: snapshot.id, dbUserId: dbUserId);
+                items.add(item);
+              }
+            }
+            return items;
+          }
+        }
+      }
+    } catch (e) {
+      throw Exception(e);
+    }
+    return null;
+  }
+
+/*  Stream<List<Item>> getAllItems() {
     try {
       return _firestoreDB
           .collection('items')
@@ -276,9 +488,9 @@ class FirestoreRepository {
     } catch (e) {
       throw Exception(e);
     }
-  }
+  }*/
 
-  Stream<List<Item>> searchItemsByName(String search) {
+  Stream<List<Item>> searchItemsByName2(String search) {
     try {
       return _firestoreDB
           .collection('items')

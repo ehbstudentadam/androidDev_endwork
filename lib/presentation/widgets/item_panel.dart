@@ -18,7 +18,12 @@ class ItemPanel extends StatelessWidget {
       child: InkWell(
         onTap: () {
           context.read<AuctionBloc>().add(LoadAuctionEvent(item));
-          GoRouter.of(context).push('/auction', extra: item);
+          if (GoRouter.of(context).location == '/dashboard' ||
+              GoRouter.of(context).location == '/') {
+            GoRouter.of(context).push('/auction', extra: item);
+          } else {
+            GoRouter.of(context).pushReplacement('/auction', extra: item);
+          }
         },
         child: Container(
           decoration: const BoxDecoration(
@@ -82,8 +87,8 @@ class ItemPanel extends StatelessWidget {
                                 padding: const EdgeInsets.all(8.0),
                                 child: DropdownButtonHideUnderline(
                                   child: DropdownButton(
-                                    borderRadius: const BorderRadius.all(Radius.circular(8.0)),
-
+                                    borderRadius: const BorderRadius.all(
+                                        Radius.circular(8.0)),
                                     items: const [
                                       DropdownMenuItem(
                                         value: 1,
@@ -96,17 +101,20 @@ class ItemPanel extends StatelessWidget {
                                     ],
                                     icon: const Icon(Icons.settings),
                                     onChanged: (value) {
-                                      if(value == 1){
+                                      if (value == 1) {
                                         CoolAlert.show(
-                                          context: context,
-                                          type: CoolAlertType.confirm,
-                                          text: "Are you sure you want to delete ${item.title}?",
-                                          confirmBtnText: "Delete",
-                                          cancelBtnText: "Cancel",
-                                          onConfirmBtnTap: () {
-                                            context.read<ItemBloc>().add(DeleteItemEvent(item));
-                                            Navigator.of(context).pop();
-                                          });
+                                            context: context,
+                                            type: CoolAlertType.confirm,
+                                            text:
+                                                "Are you sure you want to delete ${item.title}?",
+                                            confirmBtnText: "Delete",
+                                            cancelBtnText: "Cancel",
+                                            onConfirmBtnTap: () {
+                                              context
+                                                  .read<ItemBloc>()
+                                                  .add(DeleteItemEvent(item));
+                                              Navigator.of(context).pop();
+                                            });
                                       }
                                     },
                                   ),
@@ -116,9 +124,15 @@ class ItemPanel extends StatelessWidget {
                               return Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: IconButton(
+                                  color: (item.isMyFavourite) ? const Color(
+                                      0xff6c0097) : const Color(0xffffffff),
                                     icon: const Icon(Icons.favorite),
                                     onPressed: () {
-                                      //todo
+                                      if (item.isMyFavourite){
+                                        context.read<ItemBloc>().add(RemoveAsFavouriteEvent(item.itemID));
+                                      } else {
+                                        context.read<ItemBloc>().add(AddAsFavouriteEvent(item.itemID));
+                                      }
                                     }),
                               );
                             }

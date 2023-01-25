@@ -13,23 +13,34 @@ class ItemBloc extends Bloc<ItemEvent, ItemState> {
   final AuthRepository authRepository;
   final StorageRepository storageRepository;
 
-  ItemBloc({required this.storageRepository, required this.firestoreRepository, required this.authRepository})
+  ItemBloc(
+      {required this.storageRepository,
+      required this.firestoreRepository,
+      required this.authRepository})
       : super(ItemsLoadingState()) {
 
     on<LoadAllItemsEvent>((event, emit) async {
       emit(ItemsLoadingState());
       try {
-        var items = firestoreRepository.getAllItems();
+        String authUserId =
+        await authRepository.getCurrentAuthenticatedUserId();
+        String dbUserId = await firestoreRepository.getDBUserIdByAuthUserId(
+            authUserId: authUserId);
+        var items = firestoreRepository.getAllItems(currentDbUser: dbUserId).asBroadcastStream();
         emit(ItemsLoadedState(items));
       } catch (e) {
         emit(ItemErrorState(e.toString()));
       }
     });
 
-    on<SearchItemByNameEvent>((event, emit) async {
+    on<SearchAllItemByNameEvent>((event, emit) async {
       emit(ItemsLoadingState());
       try {
-        var items = firestoreRepository.searchItemsByName(event.name);
+        String authUserId =
+        await authRepository.getCurrentAuthenticatedUserId();
+        String dbUserId = await firestoreRepository.getDBUserIdByAuthUserId(
+            authUserId: authUserId);
+        var items = firestoreRepository.searchItemsByName(currentDbUser: dbUserId, searchName: event.name);
         emit(ItemsLoadedState(items));
       } catch (e) {
         emit(ItemErrorState(e.toString()));
@@ -54,27 +65,43 @@ class ItemBloc extends Bloc<ItemEvent, ItemState> {
       emit(ItemsLoadingState());
       try {
         String authUserId =
-        await authRepository.getCurrentAuthenticatedUserId();
+            await authRepository.getCurrentAuthenticatedUserId();
         String dbUserId = await firestoreRepository.getDBUserIdByAuthUserId(
             authUserId: authUserId);
-        var items = firestoreRepository.searchItemsByDbUserIdAndItemName(dbUserId, event.name);
+        var items = firestoreRepository.searchItemsByDbUserIdAndItemName(
+            dbUserId, event.name);
         emit(ItemsLoadedState(items));
       } catch (e) {
         emit(ItemErrorState(e.toString()));
       }
     });
 
-
-    on<DeleteItemEvent>((event, emit) async {
-      emit(DeletingItemState());
+    on<GetMyFavouritesEvent>((event, emit) async {
+      emit(ItemsLoadingState());
       try {
         String authUserId =
         await authRepository.getCurrentAuthenticatedUserId();
         String dbUserId = await firestoreRepository.getDBUserIdByAuthUserId(
             authUserId: authUserId);
 
+        var items = await firestoreRepository.getMyFavouriteItems(dbUserId: dbUserId);
+        emit(MyFavouritesLoadedState(items));
+      } catch (e) {
+        emit(ItemErrorState(e.toString()));
+      }
+    });
+
+    on<DeleteItemEvent>((event, emit) async {
+      emit(DeletingItemState());
+      try {
+        String authUserId =
+            await authRepository.getCurrentAuthenticatedUserId();
+        String dbUserId = await firestoreRepository.getDBUserIdByAuthUserId(
+            authUserId: authUserId);
+
         await firestoreRepository.deleteItem(item: event.item);
-        await storageRepository.deleteAllImagesFromItem(itemId: event.item.itemID);
+        await storageRepository.deleteAllImagesFromItem(
+            itemId: event.item.itemID);
 
         var items = firestoreRepository.searchMyItemsByDbUserId(dbUserId);
         emit(MyItemsLoadedState(items));
@@ -83,6 +110,31 @@ class ItemBloc extends Bloc<ItemEvent, ItemState> {
       }
     });
 
+    on<AddAsFavouriteEvent>((event, emit) async {
+      try {
+        String authUserId =
+        await authRepository.getCurrentAuthenticatedUserId();
+        String dbUserId = await firestoreRepository.getDBUserIdByAuthUserId(
+            authUserId: authUserId);
+        await firestoreRepository.addItemToMyFavourites(itemId: event.itemId, dbUserId: dbUserId);
+        emit(RefreshPageState());
+      } catch (e) {
+        emit(ItemErrorState(e.toString()));
+      }
+    });
+
+    on<RemoveAsFavouriteEvent>((event, emit) async {
+      try {
+        String authUserId =
+        await authRepository.getCurrentAuthenticatedUserId();
+        String dbUserId = await firestoreRepository.getDBUserIdByAuthUserId(
+            authUserId: authUserId);
+        await firestoreRepository.removeItemFromMyFavourites(itemId: event.itemId, dbUserId: dbUserId);
+        emit(RefreshPageState());
+      } catch (e) {
+        emit(ItemErrorState(e.toString()));
+      }
+    });
 
     add(LoadAllItemsEvent());
   }

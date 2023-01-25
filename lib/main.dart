@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'bloc/auction/auction_bloc.dart';
 import 'bloc/auth/auth_bloc.dart';
+import 'bloc/user/user_bloc.dart';
 import 'data/repository/auth_repository.dart';
 
 void main() async {
@@ -59,6 +60,12 @@ class MyApp extends StatelessWidget {
                 authRepository: RepositoryProvider.of(context),
                 storageRepository: RepositoryProvider.of(context)),
           ),
+          BlocProvider(
+            create: (context) => UserBloc(
+              firestoreRepository: RepositoryProvider.of(context),
+              authRepository: RepositoryProvider.of(context),
+            ),
+          )
         ],
         child: MaterialApp.router(
           debugShowCheckedModeBanner: false,

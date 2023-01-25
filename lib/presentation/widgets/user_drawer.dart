@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import '../../bloc/auth/auth_bloc.dart';
+import '../../bloc/user/user_bloc.dart';
 
 class UserDrawer extends StatelessWidget {
   const UserDrawer({super.key});
@@ -27,12 +29,17 @@ class UserDrawer extends StatelessWidget {
           ListTile(
             leading: const Icon(Icons.verified_user),
             title: const Text('Profile'),
-            onTap: () => {Navigator.of(context).pop()},
-          ),
-          ListTile(
-            leading: const Icon(Icons.settings),
-            title: const Text('Settings'),
-            onTap: () => {Navigator.of(context).pop()},
+            onTap: () {
+              context.read<UserBloc>().add(LoadUserNameEvent());
+              if (GoRouter.of(context).location == '/dashboard' ||
+                  GoRouter.of(context).location == '/') {
+                GoRouter.of(context).push('/my_profile');
+                Navigator.of(context).pop();
+              } else {
+                GoRouter.of(context).pushReplacement('/my_profile');
+                Navigator.of(context).pop();
+              }
+            },
           ),
           ListTile(
             leading: const Icon(Icons.exit_to_app),

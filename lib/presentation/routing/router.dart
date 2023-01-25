@@ -2,13 +2,12 @@ import 'package:drop_application/presentation/authentication/authenticate.dart';
 import 'package:drop_application/presentation/authentication/sign_in.dart';
 import 'package:drop_application/presentation/authentication/sign_up.dart';
 import 'package:drop_application/presentation/pages/auction.dart';
-import 'package:drop_application/presentation/pages/dashboard.dart';
 import 'package:drop_application/presentation/pages/my_auctions.dart';
+import 'package:drop_application/presentation/pages/my_favourites.dart';
 import 'package:drop_application/presentation/pages/new_auction.dart';
-import 'package:drop_application/presentation/routing/skeleton.dart';
+import 'package:drop_application/presentation/pages/profile_page.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-
 import '../../data/models/item.dart';
 
 final _parentKey = GlobalKey<NavigatorState>();
@@ -58,6 +57,18 @@ final router = GoRouter(
       name: 'my_auctions',
       parentNavigatorKey: _parentKey,
       builder: (context, state) => MyAuctions(),
+    ),
+    GoRoute(
+      path: '/my_favourites',
+      name: 'my_favourites',
+      parentNavigatorKey: _parentKey,
+      builder: (context, state) => MyFavourites(),
+    ),
+    GoRoute(
+      path: '/my_profile',
+      name: 'my_profile',
+      parentNavigatorKey: _parentKey,
+      builder: (context, state) => MyProfile(),
     ),
     /*ShellRoute(
       navigatorKey: _shellKey,

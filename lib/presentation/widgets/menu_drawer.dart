@@ -30,10 +30,15 @@ class MenuDrawer extends StatelessWidget {
             leading: const Icon(Icons.sell),
             title: const Text('My Auctions'),
             onTap: () {
-              //context.read<ItemBloc>().add(ChangePageEvent('/my_auctions'));
               context.read<ItemBloc>().add(GetAllItemsFromCurrentUserEvent());
-              GoRouter.of(context).push('/my_auctions');
-              Navigator.of(context).pop();
+              if (GoRouter.of(context).location == '/dashboard' ||
+                  GoRouter.of(context).location == '/') {
+                GoRouter.of(context).push('/my_auctions');
+                Navigator.of(context).pop();
+              } else {
+                GoRouter.of(context).pushReplacement('/my_auctions');
+                Navigator.of(context).pop();
+              }
             },
           ),
           ListTile(
@@ -41,21 +46,30 @@ class MenuDrawer extends StatelessWidget {
             title: const Text('New Auction'),
             onTap: () {
               context.read<AuctionBloc>().add(NewAuctionEvent());
-              GoRouter.of(context).push('/new_auction');
-              Navigator.of(context).pop();
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.history),
-            title: const Text('My bids'),
-            onTap: () {
-              //todo
+              if (GoRouter.of(context).location == '/dashboard' ||
+                  GoRouter.of(context).location == '/') {
+                GoRouter.of(context).push('/new_auction');
+                Navigator.of(context).pop();
+              } else {
+                GoRouter.of(context).pushReplacement('/new_auction');
+                Navigator.of(context).pop();
+              }
             },
           ),
           ListTile(
             leading: const Icon(Icons.favorite),
             title: const Text('Favourites'),
-            onTap: () => {Navigator.of(context).pop()},
+            onTap: () {
+              context.read<ItemBloc>().add(GetMyFavouritesEvent());
+              if (GoRouter.of(context).location == '/dashboard' ||
+                  GoRouter.of(context).location == '/') {
+                GoRouter.of(context).push('/my_favourites');
+                Navigator.of(context).pop();
+              } else {
+                GoRouter.of(context).pushReplacement('/my_favourites');
+                Navigator.of(context).pop();
+              }
+            },
           ),
         ],
       ),

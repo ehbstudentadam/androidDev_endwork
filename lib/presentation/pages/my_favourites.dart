@@ -1,5 +1,4 @@
 import 'package:animation_search_bar/animation_search_bar.dart';
-import 'package:drop_application/data/models/item.dart';
 import 'package:drop_application/presentation/widgets/item_panel.dart';
 import 'package:drop_application/presentation/widgets/menu_drawer.dart';
 import 'package:drop_application/presentation/widgets/user_drawer.dart';
@@ -9,12 +8,11 @@ import 'package:go_router/go_router.dart';
 import '../../bloc/auth/auth_bloc.dart';
 import '../../bloc/item/item_bloc.dart';
 
-
-class Dashboard extends StatelessWidget {
-  final TextEditingController _searchController = TextEditingController();
+class MyFavourites extends StatelessWidget {
+  final _searchController = TextEditingController();
   final List<String> _resultNames = [];
 
-  Dashboard({Key? key}) : super(key: key);
+  MyFavourites({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -38,13 +36,14 @@ class Dashboard extends StatelessWidget {
                     .showSnackBar(SnackBar(content: Text(state.error)));
               }
               if (state is RefreshPageState) {
-                context.read<ItemBloc>().add(LoadAllItemsEvent());
+                context.read<ItemBloc>().add(GetMyFavouritesEvent());
               }
             },
           ),
         ],
         child: BlocBuilder<ItemBloc, ItemState>(
-          buildWhen: (previous, current) => previous != current && current is ItemsLoadedState,
+          buildWhen: (previous, current) =>
+              previous != current && current is MyFavouritesLoadedState,
           builder: (context, state) {
             if (state is ItemsLoadingState) {
               // Showing the loading indicator while the user is signing in
@@ -52,7 +51,7 @@ class Dashboard extends StatelessWidget {
                 child: CircularProgressIndicator(),
               );
             }
-            if (state is ItemsLoadedState) {
+            if (state is MyFavouritesLoadedState) {
               return CustomScrollView(
                 slivers: [
                   SliverAppBar(
@@ -87,6 +86,11 @@ class Dashboard extends StatelessWidget {
                                     .add(LoadAllItemsEvent());
                               }
                             }
+                            if (GoRouter.of(context).location ==
+                                '/my_favourites') {
+                              context.read<ItemBloc>().add(LoadAllItemsEvent());
+                              GoRouter.of(context).go('/');
+                            }
                           }),
                       IconButton(
                           icon: const Icon(Icons.menu),
@@ -106,7 +110,7 @@ class Dashboard extends StatelessWidget {
                       title: AnimationSearchBar(
                         closeIconColor: Colors.white,
                         isBackButtonVisible: false,
-                        centerTitle: 'Dashboard',
+                        centerTitle: 'My Favourites',
                         centerTitleStyle: const TextStyle(
                             fontWeight: FontWeight.w500,
                             color: Colors.white,
@@ -116,7 +120,7 @@ class Dashboard extends StatelessWidget {
                         onSubmitted: (value) {
                           context
                               .read<ItemBloc>()
-                              .add(SearchAllItemByNameEvent(value));
+                              .add(SearchItemsFromCurrentUserEvent(value));
                         },
                         searchTextEditingController: _searchController,
                         searchFieldDecoration: BoxDecoration(
@@ -128,51 +132,25 @@ class Dashboard extends StatelessWidget {
                       ),
                     ),
                   ),
-                  StreamBuilder<List<Item>>(
-                      stream: state.items,
-                      builder: (context, snapshot) {
-                        if (snapshot.hasError) {
-                          throw snapshot.error!;
-                        }
-                        if (snapshot.hasData) {
-                          if (snapshot.data!.isEmpty) {
-                            _resultNames.clear();
-                            return SliverList(
-                              delegate: SliverChildListDelegate([
-                                const Padding(
-                                  padding: EdgeInsets.all(32),
-                                  child: Center(
-                                      child: Text("No auctions found...")),
-                                ),
-                              ]),
-                            );
-                          }
-                          return SliverList(
-                            delegate: SliverChildBuilderDelegate(
-                              (BuildContext context, int index) {
-                                return ItemPanel(item: snapshot.data![index]);
-                              },
-                              childCount: snapshot.data?.length,
-                            ),
+                  // Other Sliver Widgets
+                  SliverList(
+                    delegate: SliverChildBuilderDelegate(
+                      (BuildContext context, int index) {
+                        if (state.items == null || state.items!.isEmpty) {
+                          return const Padding(
+                            padding: EdgeInsets.all(32),
+                            child: Center(
+                                child: Text("No auctions found...")),
                           );
                         } else {
-                          return SliverList(
-                            delegate: SliverChildListDelegate([
-                              const Padding(
-                                padding: EdgeInsets.all(24.0),
-                                child: Center(
-                                  child: CircularProgressIndicator(),
-                                ),
-                              ),
-                            ]),
-                          );
+                          return ItemPanel(item: state.items![index]);
                         }
-                      })
+                      },
+                      childCount: state.items?.length ?? 1,
+                    ),
+                  )
                 ],
               );
-            }
-            if (state is MyItemsLoadedState) {
-              GoRouter.of(context).push('/my_auctions');
             }
             return Container();
           },

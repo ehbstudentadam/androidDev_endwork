@@ -11,6 +11,7 @@ class Item {
   final List<String>? bids;
   bool toDelete = false;
   bool isMyItem = false;
+  bool isMyFavourite = false;
 
   Item(
       {required this.sellerID,
