@@ -1,12 +1,12 @@
 # Project fluttereindwerk - DROP
 Flutter project voor mijn examen.
-Project voorstel:
-   Een 2eHands App.
-   Verwijderen van item
-   Plaatsen van item
-   Bieden op Item
-   Zoeken van Item
-   Inloggen Account
+- Project voorstel:
+-   Een 2eHands App.
+-   Verwijderen van item
+-   Plaatsen van item
+-   Bieden op Item
+-   Zoeken van Item
+-   Inloggen Account
 
 ## Table of Contents
 * [General Info](#general-information)
