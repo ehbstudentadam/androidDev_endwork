@@ -8,7 +8,6 @@ import '../../bloc/item/item_bloc.dart';
 import '../../bloc/user/user_bloc.dart';
 
 class MyProfile extends StatelessWidget {
-
   MyProfile({Key? key}) : super(key: key);
 
   final _formKeyProfile = GlobalKey<FormState>();
@@ -105,111 +104,119 @@ class MyProfile extends StatelessWidget {
                   ),
                 ),
                 // Other Sliver Widgets
-                SliverLayoutBuilder(builder: (context, constraints) {
-                  if (state is UserLoadingState) {
-                    return SliverList(
-                      delegate: SliverChildListDelegate([
-                        const Padding(
-                          padding: EdgeInsets.all(24.0),
-                          child: Center(
-                            child: CircularProgressIndicator(),
+                SliverLayoutBuilder(
+                  builder: (context, constraints) {
+                    if (state is UserLoadingState) {
+                      return SliverList(
+                        delegate: SliverChildListDelegate([
+                          const Padding(
+                            padding: EdgeInsets.all(24.0),
+                            child: Center(
+                              child: CircularProgressIndicator(),
+                            ),
                           ),
-                        ),
-                      ]),
-                    );
-                  }
-                  if (state is UserLoadedState) {
-                    return SliverList(
-                      delegate: SliverChildListDelegate([
-                        Form(
-                          key: _formKeyProfile,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.all(24.0),
-                                child: Text(
-                                  'Current username: ${state.userName}',
-                                  style: Theme.of(context).textTheme.headline5,
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.only(left: 24.0, right: 24),
-                                child: Text(
-                                  'Enter new username:',
-                                  style: Theme.of(context).textTheme.headline5,
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.all(24.0),
-                                child: SizedBox(
-                                  width: double.infinity,
-                                  height: 44,
-                                  child: TextFormField(
-                                    textAlignVertical: TextAlignVertical.top,
-                                    style: Theme.of(context).textTheme.headline5,
-                                    controller: _nameController,
-                                    decoration: const InputDecoration(
-                                      border: OutlineInputBorder(),
-                                    ),
-                                    keyboardType: TextInputType.text,
-                                    autovalidateMode:
-                                        AutovalidateMode.onUserInteraction,
-                                    validator: (value) {
-                                      return value != null &&
-                                              value.length > 12 &&
-                                              value.length < 3
-                                          ? "Username must be between 3 ~ 20 characters"
-                                          : null;
-                                    },
+                        ]),
+                      );
+                    }
+                    if (state is UserLoadedState) {
+                      return SliverList(
+                        delegate: SliverChildListDelegate([
+                          Form(
+                            key: _formKeyProfile,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.all(24.0),
+                                  child: Text(
+                                    'Current username: ${state.userName}',
+                                    style:
+                                        Theme.of(context).textTheme.headline5,
                                   ),
                                 ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.only(left: 24, right: 24),
-                                child: SizedBox(
-                                  width: double.infinity,
-                                  height: 48,
-                                  child: ElevatedButton.icon(
-                                    icon: const Icon(
-                                      Icons.update,
-                                      color: Colors.white,
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                      left: 24.0, right: 24),
+                                  child: Text(
+                                    'Enter new username:',
+                                    style:
+                                        Theme.of(context).textTheme.headline5,
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.all(24.0),
+                                  child: SizedBox(
+                                    width: double.infinity,
+                                    height: 44,
+                                    child: TextFormField(
+                                      textAlignVertical: TextAlignVertical.top,
+                                      style:
+                                          Theme.of(context).textTheme.headline5,
+                                      controller: _nameController,
+                                      decoration: const InputDecoration(
+                                        border: OutlineInputBorder(),
+                                      ),
+                                      keyboardType: TextInputType.text,
+                                      autovalidateMode:
+                                          AutovalidateMode.onUserInteraction,
+                                      validator: (value) {
+                                        return value!.length > 3 &&
+                                            value.length < 20
+                                            ? null
+                                            : "Username between 3 ~ 20 characters";
+                                      },
                                     ),
-                                    style: ButtonStyle(
-                                      shape: MaterialStateProperty.all<
-                                          RoundedRectangleBorder>(
-                                        RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(32),
-                                          side: const BorderSide(
-                                              color: Colors.deepPurple),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                      left: 24, right: 24),
+                                  child: SizedBox(
+                                    width: double.infinity,
+                                    height: 48,
+                                    child: ElevatedButton.icon(
+                                      icon: const Icon(
+                                        Icons.update,
+                                        color: Colors.white,
+                                      ),
+                                      style: ButtonStyle(
+                                        shape: MaterialStateProperty.all<
+                                            RoundedRectangleBorder>(
+                                          RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(32),
+                                            side: const BorderSide(
+                                                color: Colors.deepPurple),
+                                          ),
                                         ),
                                       ),
+                                      label: const Text(
+                                        'Update name',
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.w400),
+                                      ),
+                                      onPressed: () {
+                                        if (_formKeyProfile.currentState!
+                                            .validate()) {
+                                          context.read<UserBloc>().add(
+                                              UpdateUserNameEvent(
+                                                  _nameController.text));
+                                        }
+                                      },
                                     ),
-                                    label: const Text(
-                                      'Update name',
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.w400),
-                                    ),
-                                    onPressed: () {
-                                      if (_formKeyProfile.currentState!.validate()) {
-                                        context.read<UserBloc>().add(
-                                            UpdateUserNameEvent(
-                                                _nameController.text));
-                                      }
-                                    },
                                   ),
                                 ),
-                              ),
-                            ],
-                          ),
-                        )
-                      ]),
-                    );
-                  }
-                  return Container();
-                })
+                              ],
+                            ),
+                          )
+                        ]),
+                      );
+                    }
+                    return Container();
+                  },
+                )
               ],
             );
           },

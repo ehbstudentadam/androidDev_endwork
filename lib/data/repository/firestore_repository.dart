@@ -7,6 +7,7 @@ import '../models/item.dart';
 class FirestoreRepository {
   final _firestoreDB = FirebaseFirestore.instance;
 
+  //Used for linking firebase-authentication user to firestore-database user
   Future<void> createDBUser({
     required String authUserID,
   }) async {
@@ -27,7 +28,7 @@ class FirestoreRepository {
     required double price,
   }) async {
     try {
-      //add bid
+      //create new bid to database
       final docBids = _firestoreDB.collection('bids').doc();
       final bid = Bid(
           bidderID: bidderID,
@@ -57,16 +58,20 @@ class FirestoreRepository {
 
   Future<String> createItem({required Item item}) async {
     try {
+      //create new item in database
       final docItem = _firestoreDB.collection('items').doc();
       final json = item.toJson();
       await docItem.set(json);
 
+      //update database user with new item
       String itemIdJustCreated = docItem.id;
 
       final docUser = _firestoreDB.collection('users').doc(item.sellerID);
       docUser.update({
         'itemsForSale': FieldValue.arrayUnion([itemIdJustCreated].toList()),
       });
+
+      //returning new itemId for later linking with storage images
       return itemIdJustCreated;
     } catch (e) {
       throw Exception(e);
@@ -75,6 +80,7 @@ class FirestoreRepository {
 
   Future<void> deleteItem({required Item item}) async {
     try {
+      //Delete item
       final docItem = _firestoreDB.collection('items').doc(item.itemID);
       await docItem.delete().whenComplete(
         () async {
@@ -132,6 +138,7 @@ class FirestoreRepository {
     }
   }
 
+  //used to link download link of image to item
   Future<void> linkImageToItem(
       {required String itemID, required String imageDownloadLink}) async {
     try {
@@ -168,7 +175,7 @@ class FirestoreRepository {
     }
   }
 
-  Future<String> getDbUserNameFromDbUserID({required String dbUserID}) async {
+  Future<String> getDbUserNameFromDbUserId({required String dbUserID}) async {
     try {
       final docUser = _firestoreDB.collection('users').doc(dbUserID);
       final snapshot = await docUser.get();
@@ -178,26 +185,26 @@ class FirestoreRepository {
           return DbUser.fromJson(snapshot.data()!).userName;
         }
       }
-      throw Exception("getDbUserNameFromDbUserID() No fireStore userName found");
+      throw Exception(
+          "getDbUserNameFromDbUserId() No fireStore userName found");
     } catch (e) {
       throw Exception(e);
     }
   }
 
-  Future<void> updateDbUserNameFromDbUserID({required String dbUserID, required String newUserName}) async {
+  Future<void> updateDbUserNameFromDbUserId(
+      {required String dbUserID, required String newUserName}) async {
     try {
       final docUser = _firestoreDB.collection('users').doc(dbUserID);
-
       docUser.update({
         'userName': newUserName,
       });
-
     } catch (e) {
       throw Exception(e);
     }
   }
 
-  Future<DbUser> getDBUserByDBUserId({required String dbUserID}) async {
+  Future<DbUser> getDbUserByDbUserId({required String dbUserID}) async {
     try {
       final docUser = _firestoreDB.collection('users').doc(dbUserID);
       final snapshot = await docUser.get();
@@ -205,13 +212,13 @@ class FirestoreRepository {
       if (snapshot.exists) {
         return DbUser.fromJson(snapshot.data()!);
       }
-      throw Exception("getDBUserByDBUserId() No fireStore user found");
+      throw Exception("getDbUserByDbUserId() No fireStore user found");
     } catch (e) {
       throw Exception(e);
     }
   }
 
-  Future<String> getDBUserIdByAuthUserId({required String authUserId}) async {
+  Future<String> getDbUserIdByAuthUserId({required String authUserId}) async {
     try {
       final docUser = _firestoreDB
           .collection('users')
@@ -224,78 +231,11 @@ class FirestoreRepository {
           return doc.id;
         }
       }
-      throw Exception("getDBUserIdByAuthUserId() No fireStore user found");
+      throw Exception("getDbUserIdByAuthUserId() No fireStore user found");
     } catch (e) {
       throw Exception(e);
     }
   }
-
-  Future<Bid?> getBidByBidId({required String bidID}) async {
-    final docBid = _firestoreDB.collection('bids').doc(bidID);
-    final snapshot = await docBid.get();
-
-    if (snapshot.exists) {
-      return Bid.fromJson(snapshot.data()!);
-    }
-
-    return null;
-  }
-
-  Future<DbUser?> getBidderDBUserByBidId({required String bidID}) async {
-    final docUser =
-        _firestoreDB.collection('bids').where('bidderID', isEqualTo: bidID);
-    final snapshot = await docUser.get();
-
-    // Iterate through the documents in the snapshot
-    for (var doc in snapshot.docs) {
-      if (doc.exists) {
-        return DbUser.fromJson(doc.data());
-      }
-    }
-    return null;
-  }
-
-  Future<DbUser?> getSellerDBUserByItemId({required String itemID}) async {
-    final docUser =
-        _firestoreDB.collection('bids').where('sellerID', isEqualTo: itemID);
-    final snapshot = await docUser.get();
-
-    // Iterate through the documents in the snapshot
-    for (var doc in snapshot.docs) {
-      if (doc.exists) {
-        return DbUser.fromJson(doc.data());
-      }
-    }
-    return null;
-  }
-
-  Future<Item?> getItemByItemId({required String itemID}) async {
-    final docItem = _firestoreDB.collection('items').doc(itemID);
-    final snapshot = await docItem.get();
-
-    // Iterate through the documents in the snapshot
-    if (snapshot.exists) {
-      return Item.fromJson(snapshot.data()!);
-    }
-    return null;
-  }
-
-/*  Stream<List<Bid>> getAllBidsByDBUserId(
-          {required String dbUserID}) =>
-      _firestoreDB
-          .collection('bids')
-          .where('bidderID', isEqualTo: dbUserID)
-          .snapshots()
-          .map((snapshot) =>
-              snapshot.docs.map((doc) => Bid.fromJson(doc.data())).toList());
-
-  Stream<List<Item>> getAllItemsByDBUserId({required String dbUserID}) =>
-      _firestoreDB
-          .collection('items')
-          .where('sellerID', isEqualTo: dbUserID)
-          .snapshots()
-          .map((snapshot) =>
-              snapshot.docs.map((doc) => Item.fromJson(doc.data())).toList());*/
 
   Stream<List<Bid>> getAllBidsByItemId({required String itemID}) async* {
     try {
@@ -306,13 +246,13 @@ class FirestoreRepository {
           .asyncMap<List<Bid>>((event) async {
         List<Bid> bids = [];
 
+        //for each bid, do lookup for username and add assign to bid
         for (var doc in event.docs) {
           try {
             Bid bid = Bid.fromJson(doc.data());
             bid.bidId = doc.id;
             bid.userName =
-                await getDbUserNameFromDbUserID(dbUserID: bid.bidderID);
-
+                await getDbUserNameFromDbUserId(dbUserID: bid.bidderID);
             bids.add(bid);
           } catch (e) {
             throw Exception(e);
@@ -358,6 +298,7 @@ class FirestoreRepository {
           .asyncMap<List<Item>>((event) async {
         List<Item> items = [];
 
+        //for each item, do lookup if item is personal favourite and assign to item
         for (var doc in event.docs) {
           try {
             Item item = Item.fromJson(doc.data());
@@ -406,40 +347,6 @@ class FirestoreRepository {
     }
   }
 
-  Stream<List<Item>> getMyFavouriteItems2({required String dbUserId}) async* {
-    try {
-      final docUser = _firestoreDB.collection('users').doc(dbUserId);
-      final snapshot = await docUser.get();
-
-      DbUser dbUser;
-      if (snapshot.exists) {
-        if (DbUser.fromJson(snapshot.data()!).itemFavourites != null) {
-          if (DbUser.fromJson(snapshot.data()!).itemFavourites!.isNotEmpty) {
-            dbUser = DbUser.fromJson(snapshot.data()!);
-
-            List<Item> items = [];
-
-            for (var itemId in dbUser.itemFavourites!) {
-              final docItem = _firestoreDB.collection('items').doc(itemId);
-              final snapshot = await docItem.get();
-
-              if (snapshot.exists) {
-                Item item = Item.fromJson(snapshot.data()!);
-                item.itemID = snapshot.id;
-                item.isMyFavourite = await checkIfItemIdIsFavourite(
-                    itemId: snapshot.id, dbUserId: dbUserId);
-                items.add(item);
-              }
-            }
-            yield items;
-          }
-        }
-      }
-    } catch (e) {
-      throw Exception(e);
-    }
-  }
-
   Future<List<Item>?> getMyFavouriteItems({required String dbUserId}) async {
     try {
       final docUser = _firestoreDB.collection('users').doc(dbUserId);
@@ -475,35 +382,42 @@ class FirestoreRepository {
     return null;
   }
 
-/*  Stream<List<Item>> getAllItems() {
+  Future<List<Item>?> searchMyFavouriteItems(
+      {required String dbUserId, required String searchName}) async {
     try {
-      return _firestoreDB
-          .collection('items')
-          .snapshots()
-          .map((snapshot) => snapshot.docs.map((doc) {
-                Item item = Item.fromJson(doc.data());
-                item.itemID = doc.id;
-                return item;
-              }).toList());
-    } catch (e) {
-      throw Exception(e);
-    }
-  }*/
+      final docUser = _firestoreDB.collection('users').doc(dbUserId);
+      final snapshot = await docUser.get();
 
-  Stream<List<Item>> searchItemsByName2(String search) {
-    try {
-      return _firestoreDB
-          .collection('items')
-          .where('title', isEqualTo: search)
-          .snapshots()
-          .map((snapshot) => snapshot.docs.map((doc) {
-                Item item = Item.fromJson(doc.data());
-                item.itemID = doc.id;
-                return item;
-              }).toList());
+      DbUser dbUser;
+      if (snapshot.exists) {
+        if (DbUser.fromJson(snapshot.data()!).itemFavourites != null) {
+          if (DbUser.fromJson(snapshot.data()!).itemFavourites!.isNotEmpty) {
+            dbUser = DbUser.fromJson(snapshot.data()!);
+
+            List<Item> items = [];
+
+            for (var itemId in dbUser.itemFavourites!) {
+              final docItem = _firestoreDB.collection('items').doc(itemId);
+              final snapshot = await docItem.get();
+
+              if (snapshot.exists) {
+                Item item = Item.fromJson(snapshot.data()!);
+                item.itemID = snapshot.id;
+                item.isMyFavourite = await checkIfItemIdIsFavourite(
+                    itemId: snapshot.id, dbUserId: dbUserId);
+                if (item.title == searchName) {
+                  items.add(item);
+                }
+              }
+            }
+            return items;
+          }
+        }
+      }
     } catch (e) {
       throw Exception(e);
     }
+    return null;
   }
 
   Stream<List<Item>> searchMyItemsByDbUserId(String dbUserId) {

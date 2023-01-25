@@ -8,11 +8,6 @@ class ItemsLoadingState extends ItemState {
   List<Object?> get props => [];
 }
 
-class RefreshPageState extends ItemState {
-  @override
-  List<Object?> get props => [];
-}
-
 class ItemsLoadedState extends ItemState {
   final Stream<List<Item>> items;
 
@@ -40,6 +35,10 @@ class MyFavouritesLoadedState extends ItemState {
   List<Object?> get props => [items];
 }
 
+class RefreshPageState extends ItemState {
+  @override
+  List<Object?> get props => [];
+}
 
 class DeletingItemState extends ItemState {
   @override

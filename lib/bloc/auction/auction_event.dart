@@ -15,7 +15,7 @@ class LoadAuctionEvent extends AuctionEvent {
   List<Object> get props => [item];
 }
 
-class NewAuctionEvent extends AuctionEvent {
+class OpenNewAuctionPageEvent extends AuctionEvent {
   @override
   List<Object> get props => [];
 }
@@ -33,6 +33,6 @@ class PostNewAuctionEvent extends AuctionEvent {
   List<Object> get props => [auctionName, auctionPrice, auctionDescription];
 }
 
-class EditAuctionEvent extends AuctionEvent {}
-
-class RemoveAuctionEvent extends AuctionEvent {}
+class EditAuctionEvent extends AuctionEvent {
+  //todo
+}

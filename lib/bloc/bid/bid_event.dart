@@ -6,6 +6,15 @@ abstract class BidEvent extends Equatable {
   List<Object> get props => [];
 }
 
+class LoadAllBidsEvent extends BidEvent {
+  final Item item;
+
+  LoadAllBidsEvent(this.item);
+
+  @override
+  List<Object> get props => [item];
+}
+
 class CreateBidEvent extends BidEvent {
   final Item item;
   final double price;
@@ -16,13 +25,6 @@ class CreateBidEvent extends BidEvent {
   List<Object> get props => [item, price];
 }
 
-class LoadAllBidsEvent extends BidEvent {
-  final Item item;
-
-  LoadAllBidsEvent(this.item);
-
-  @override
-  List<Object> get props => [item];
+class DeleteBidEvent extends BidEvent {
+  //todo
 }
-
-class DeleteBidEvent extends BidEvent {}

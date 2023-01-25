@@ -21,9 +21,7 @@ class StorageRepository {
 
         final reference = _storage.ref().child(path);
         var uploadTask = reference.putFile(fileToUpload);
-
         final snapshot = await uploadTask.whenComplete(() {});
-
         final urlDownload = await snapshot.ref.getDownloadURL();
 
         firestoreRepository.linkImageToItem(

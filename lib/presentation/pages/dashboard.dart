@@ -9,7 +9,6 @@ import 'package:go_router/go_router.dart';
 import '../../bloc/auth/auth_bloc.dart';
 import '../../bloc/item/item_bloc.dart';
 
-
 class Dashboard extends StatelessWidget {
   final TextEditingController _searchController = TextEditingController();
   final List<String> _resultNames = [];
@@ -44,7 +43,8 @@ class Dashboard extends StatelessWidget {
           ),
         ],
         child: BlocBuilder<ItemBloc, ItemState>(
-          buildWhen: (previous, current) => previous != current && current is ItemsLoadedState,
+          buildWhen: (previous, current) =>
+              previous != current && current is ItemsLoadedState,
           builder: (context, state) {
             if (state is ItemsLoadingState) {
               // Showing the loading indicator while the user is signing in
@@ -129,50 +129,48 @@ class Dashboard extends StatelessWidget {
                     ),
                   ),
                   StreamBuilder<List<Item>>(
-                      stream: state.items,
-                      builder: (context, snapshot) {
-                        if (snapshot.hasError) {
-                          throw snapshot.error!;
-                        }
-                        if (snapshot.hasData) {
-                          if (snapshot.data!.isEmpty) {
-                            _resultNames.clear();
-                            return SliverList(
-                              delegate: SliverChildListDelegate([
-                                const Padding(
-                                  padding: EdgeInsets.all(32),
-                                  child: Center(
-                                      child: Text("No auctions found...")),
-                                ),
-                              ]),
-                            );
-                          }
-                          return SliverList(
-                            delegate: SliverChildBuilderDelegate(
-                              (BuildContext context, int index) {
-                                return ItemPanel(item: snapshot.data![index]);
-                              },
-                              childCount: snapshot.data?.length,
-                            ),
-                          );
-                        } else {
+                    stream: state.items,
+                    builder: (context, snapshot) {
+                      if (snapshot.hasError) {
+                        throw snapshot.error!;
+                      }
+                      if (snapshot.hasData) {
+                        if (snapshot.data!.isEmpty) {
+                          _resultNames.clear();
                           return SliverList(
                             delegate: SliverChildListDelegate([
                               const Padding(
-                                padding: EdgeInsets.all(24.0),
-                                child: Center(
-                                  child: CircularProgressIndicator(),
-                                ),
+                                padding: EdgeInsets.all(32),
+                                child:
+                                    Center(child: Text("No auctions found...")),
                               ),
                             ]),
                           );
                         }
-                      })
+                        return SliverList(
+                          delegate: SliverChildBuilderDelegate(
+                            (BuildContext context, int index) {
+                              return ItemPanel(item: snapshot.data![index]);
+                            },
+                            childCount: snapshot.data?.length,
+                          ),
+                        );
+                      } else {
+                        return SliverList(
+                          delegate: SliverChildListDelegate([
+                            const Padding(
+                              padding: EdgeInsets.all(24.0),
+                              child: Center(
+                                child: CircularProgressIndicator(),
+                              ),
+                            ),
+                          ]),
+                        );
+                      }
+                    },
+                  )
                 ],
               );
-            }
-            if (state is MyItemsLoadedState) {
-              GoRouter.of(context).push('/my_auctions');
             }
             return Container();
           },

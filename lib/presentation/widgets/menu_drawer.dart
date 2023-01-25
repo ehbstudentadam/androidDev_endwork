@@ -45,7 +45,7 @@ class MenuDrawer extends StatelessWidget {
             leading: const Icon(Icons.post_add),
             title: const Text('New Auction'),
             onTap: () {
-              context.read<AuctionBloc>().add(NewAuctionEvent());
+              context.read<AuctionBloc>().add(OpenNewAuctionPageEvent());
               if (GoRouter.of(context).location == '/dashboard' ||
                   GoRouter.of(context).location == '/') {
                 GoRouter.of(context).push('/new_auction');

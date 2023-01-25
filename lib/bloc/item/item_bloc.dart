@@ -18,15 +18,14 @@ class ItemBloc extends Bloc<ItemEvent, ItemState> {
       required this.firestoreRepository,
       required this.authRepository})
       : super(ItemsLoadingState()) {
-
     on<LoadAllItemsEvent>((event, emit) async {
       emit(ItemsLoadingState());
       try {
         String authUserId =
-        await authRepository.getCurrentAuthenticatedUserId();
-        String dbUserId = await firestoreRepository.getDBUserIdByAuthUserId(
+            await authRepository.getCurrentAuthenticatedUserId();
+        String dbUserId = await firestoreRepository.getDbUserIdByAuthUserId(
             authUserId: authUserId);
-        var items = firestoreRepository.getAllItems(currentDbUser: dbUserId).asBroadcastStream();
+        var items = firestoreRepository.getAllItems(currentDbUser: dbUserId);
         emit(ItemsLoadedState(items));
       } catch (e) {
         emit(ItemErrorState(e.toString()));
@@ -37,10 +36,11 @@ class ItemBloc extends Bloc<ItemEvent, ItemState> {
       emit(ItemsLoadingState());
       try {
         String authUserId =
-        await authRepository.getCurrentAuthenticatedUserId();
-        String dbUserId = await firestoreRepository.getDBUserIdByAuthUserId(
+            await authRepository.getCurrentAuthenticatedUserId();
+        String dbUserId = await firestoreRepository.getDbUserIdByAuthUserId(
             authUserId: authUserId);
-        var items = firestoreRepository.searchItemsByName(currentDbUser: dbUserId, searchName: event.name);
+        var items = firestoreRepository.searchItemsByName(
+            currentDbUser: dbUserId, searchName: event.name);
         emit(ItemsLoadedState(items));
       } catch (e) {
         emit(ItemErrorState(e.toString()));
@@ -52,7 +52,7 @@ class ItemBloc extends Bloc<ItemEvent, ItemState> {
       try {
         String authUserId =
             await authRepository.getCurrentAuthenticatedUserId();
-        String dbUserId = await firestoreRepository.getDBUserIdByAuthUserId(
+        String dbUserId = await firestoreRepository.getDbUserIdByAuthUserId(
             authUserId: authUserId);
         var items = firestoreRepository.searchMyItemsByDbUserId(dbUserId);
         emit(MyItemsLoadedState(items));
@@ -66,11 +66,11 @@ class ItemBloc extends Bloc<ItemEvent, ItemState> {
       try {
         String authUserId =
             await authRepository.getCurrentAuthenticatedUserId();
-        String dbUserId = await firestoreRepository.getDBUserIdByAuthUserId(
+        String dbUserId = await firestoreRepository.getDbUserIdByAuthUserId(
             authUserId: authUserId);
         var items = firestoreRepository.searchItemsByDbUserIdAndItemName(
             dbUserId, event.name);
-        emit(ItemsLoadedState(items));
+        emit(MyItemsLoadedState(items));
       } catch (e) {
         emit(ItemErrorState(e.toString()));
       }
@@ -80,11 +80,27 @@ class ItemBloc extends Bloc<ItemEvent, ItemState> {
       emit(ItemsLoadingState());
       try {
         String authUserId =
-        await authRepository.getCurrentAuthenticatedUserId();
-        String dbUserId = await firestoreRepository.getDBUserIdByAuthUserId(
+            await authRepository.getCurrentAuthenticatedUserId();
+        String dbUserId = await firestoreRepository.getDbUserIdByAuthUserId(
             authUserId: authUserId);
 
-        var items = await firestoreRepository.getMyFavouriteItems(dbUserId: dbUserId);
+        var items =
+            await firestoreRepository.getMyFavouriteItems(dbUserId: dbUserId);
+        emit(MyFavouritesLoadedState(items));
+      } catch (e) {
+        emit(ItemErrorState(e.toString()));
+      }
+    });
+
+    on<SearchFavouritesEvent>((event, emit) async {
+      emit(ItemsLoadingState());
+      try {
+        String authUserId =
+            await authRepository.getCurrentAuthenticatedUserId();
+        String dbUserId = await firestoreRepository.getDbUserIdByAuthUserId(
+            authUserId: authUserId);
+        var items = await firestoreRepository.searchMyFavouriteItems(
+            dbUserId: dbUserId, searchName: event.name);
         emit(MyFavouritesLoadedState(items));
       } catch (e) {
         emit(ItemErrorState(e.toString()));
@@ -96,7 +112,7 @@ class ItemBloc extends Bloc<ItemEvent, ItemState> {
       try {
         String authUserId =
             await authRepository.getCurrentAuthenticatedUserId();
-        String dbUserId = await firestoreRepository.getDBUserIdByAuthUserId(
+        String dbUserId = await firestoreRepository.getDbUserIdByAuthUserId(
             authUserId: authUserId);
 
         await firestoreRepository.deleteItem(item: event.item);
@@ -113,10 +129,11 @@ class ItemBloc extends Bloc<ItemEvent, ItemState> {
     on<AddAsFavouriteEvent>((event, emit) async {
       try {
         String authUserId =
-        await authRepository.getCurrentAuthenticatedUserId();
-        String dbUserId = await firestoreRepository.getDBUserIdByAuthUserId(
+            await authRepository.getCurrentAuthenticatedUserId();
+        String dbUserId = await firestoreRepository.getDbUserIdByAuthUserId(
             authUserId: authUserId);
-        await firestoreRepository.addItemToMyFavourites(itemId: event.itemId, dbUserId: dbUserId);
+        await firestoreRepository.addItemToMyFavourites(
+            itemId: event.itemId, dbUserId: dbUserId);
         emit(RefreshPageState());
       } catch (e) {
         emit(ItemErrorState(e.toString()));
@@ -126,10 +143,11 @@ class ItemBloc extends Bloc<ItemEvent, ItemState> {
     on<RemoveAsFavouriteEvent>((event, emit) async {
       try {
         String authUserId =
-        await authRepository.getCurrentAuthenticatedUserId();
-        String dbUserId = await firestoreRepository.getDBUserIdByAuthUserId(
+            await authRepository.getCurrentAuthenticatedUserId();
+        String dbUserId = await firestoreRepository.getDbUserIdByAuthUserId(
             authUserId: authUserId);
-        await firestoreRepository.removeItemFromMyFavourites(itemId: event.itemId, dbUserId: dbUserId);
+        await firestoreRepository.removeItemFromMyFavourites(
+            itemId: event.itemId, dbUserId: dbUserId);
         emit(RefreshPageState());
       } catch (e) {
         emit(ItemErrorState(e.toString()));

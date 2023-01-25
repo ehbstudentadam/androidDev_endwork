@@ -10,6 +10,7 @@ class AuthRepository {
     try {
       await FirebaseAuth.instance
           .createUserWithEmailAndPassword(email: email, password: password);
+      //Link firebase-authentication user to firestore-database user
       await firestoreRepository.createDBUser(
           authUserID: _firebaseAuth.currentUser!.uid);
     } on FirebaseAuthException catch (e) {

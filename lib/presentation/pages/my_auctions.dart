@@ -37,146 +37,156 @@ class MyAuctions extends StatelessWidget {
                     .showSnackBar(SnackBar(content: Text(state.error)));
               }
               if (state is DeletingItemState) {
-                ScaffoldMessenger.of(context)
-                    .showSnackBar(const SnackBar(content: Text('Deleting auction...')));
+                ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Deleting auction...')));
               }
             },
           ),
         ],
         child: BlocBuilder<ItemBloc, ItemState>(
-          buildWhen: (previous, current) => previous != current && current is MyItemsLoadedState,
+          buildWhen: (previous, current) =>
+              previous != current && current is MyItemsLoadedState,
           builder: (context, state) {
-            if (state is ItemsLoadingState) {
-              // Showing the loading indicator while the user is signing in
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
-            }
-            if (state is MyItemsLoadedState) {
-              return CustomScrollView(
-                slivers: [
-                  SliverAppBar(
+            return CustomScrollView(
+              slivers: [
+                SliverAppBar(
+                  shape: const ContinuousRectangleBorder(
+                    borderRadius: BorderRadius.only(
+                      bottomLeft: Radius.circular(16),
+                      bottomRight: Radius.circular(16),
+                    ),
+                  ),
+                  floating: true,
+                  pinned: true,
+                  snap: false,
+                  centerTitle: false,
+                  leading: IconButton(
+                    onPressed: () {
+                      return Scaffold.of(context).openDrawer();
+                    },
+                    icon: const Icon(Icons.account_circle),
+                  ),
+                  title: const Center(
+                    child: Text('DROP'),
+                  ),
+                  actions: [
+                    IconButton(
+                        icon: const Icon(Icons.home),
+                        onPressed: () {
+                          if (GoRouter.of(context).location == '/dashboard' ||
+                              GoRouter.of(context).location == '/') {
+                            if (_resultNames.isEmpty) {
+                              context.read<ItemBloc>().add(LoadAllItemsEvent());
+                            }
+                          }
+                          if (GoRouter.of(context).location == '/my_auctions') {
+                            context.read<ItemBloc>().add(LoadAllItemsEvent());
+                            GoRouter.of(context).go('/');
+                          }
+                        }),
+                    IconButton(
+                        icon: const Icon(Icons.menu),
+                        onPressed: () {
+                          return Scaffold.of(context).openEndDrawer();
+                        }),
+                  ],
+                  bottom: AppBar(
                     shape: const ContinuousRectangleBorder(
                       borderRadius: BorderRadius.only(
                         bottomLeft: Radius.circular(16),
                         bottomRight: Radius.circular(16),
                       ),
                     ),
-                    floating: true,
-                    pinned: true,
-                    snap: false,
-                    centerTitle: false,
-                    leading: IconButton(
-                      onPressed: () {
-                        return Scaffold.of(context).openDrawer();
+                    automaticallyImplyLeading: false,
+                    actions: <Widget>[Container()],
+                    title: AnimationSearchBar(
+                      closeIconColor: Colors.white,
+                      isBackButtonVisible: false,
+                      centerTitle: 'My Auctions',
+                      centerTitleStyle: const TextStyle(
+                          fontWeight: FontWeight.w500,
+                          color: Colors.white,
+                          fontSize: 20),
+                      searchIconColor: Colors.white,
+                      onChanged: (value) {},
+                      onSubmitted: (value) {
+                        context
+                            .read<ItemBloc>()
+                            .add(SearchItemsFromCurrentUserEvent(value));
                       },
-                      icon: const Icon(Icons.account_circle),
-                    ),
-                    title: const Center(
-                      child: Text('DROP'),
-                    ),
-                    actions: [
-                      IconButton(
-                          icon: const Icon(Icons.home),
-                          onPressed: () {
-                            if (GoRouter.of(context).location == '/dashboard' ||
-                                GoRouter.of(context).location == '/') {
-                              if (_resultNames.isEmpty) {
-                                context
-                                    .read<ItemBloc>()
-                                    .add(LoadAllItemsEvent());
-                              }
-                            }
-                            if (GoRouter.of(context).location == '/my_auctions') {
-                              context.read<ItemBloc>().add(LoadAllItemsEvent());
-                              GoRouter.of(context).go('/');
-                            }
-                          }),
-                      IconButton(
-                          icon: const Icon(Icons.menu),
-                          onPressed: () {
-                            return Scaffold.of(context).openEndDrawer();
-                          }),
-                    ],
-                    bottom: AppBar(
-                      shape: const ContinuousRectangleBorder(
-                        borderRadius: BorderRadius.only(
-                          bottomLeft: Radius.circular(16),
-                          bottomRight: Radius.circular(16),
-                        ),
-                      ),
-                      automaticallyImplyLeading: false,
-                      actions: <Widget>[Container()],
-                      title: AnimationSearchBar(
-                        closeIconColor: Colors.white,
-                        isBackButtonVisible: false,
-                        centerTitle: 'My Auctions',
-                        centerTitleStyle: const TextStyle(
-                            fontWeight: FontWeight.w500,
-                            color: Colors.white,
-                            fontSize: 20),
-                        searchIconColor: Colors.white,
-                        onChanged: (value) {},
-                        onSubmitted: (value) {
-                          context
-                              .read<ItemBloc>()
-                              .add(SearchItemsFromCurrentUserEvent(value));
-                        },
-                        searchTextEditingController: _searchController,
-                        searchFieldDecoration: BoxDecoration(
-                            color: Colors.white,
-                            border: Border.all(
-                                color: Colors.white.withOpacity(.2), width: .5),
-                            borderRadius: BorderRadius.circular(15)),
-                        searchBarWidth: MediaQuery.of(context).size.width - 30,
-                      ),
+                      searchTextEditingController: _searchController,
+                      searchFieldDecoration: BoxDecoration(
+                          color: Colors.white,
+                          border: Border.all(
+                              color: Colors.white.withOpacity(.2), width: .5),
+                          borderRadius: BorderRadius.circular(15)),
+                      searchBarWidth: MediaQuery.of(context).size.width - 30,
                     ),
                   ),
-                  // Other Sliver Widgets
-                  StreamBuilder<List<Item>>(
-                      stream: state.items,
-                      builder: (context, snapshot) {
-                        if (snapshot.hasError) {
-                          // todo
-                        }
-                        if (snapshot.hasData) {
-                          if (snapshot.data!.isEmpty) {
-                            _resultNames.clear();
+                ),
+                // Other Sliver Widgets
+                SliverLayoutBuilder(
+                  builder: (context, constraints) {
+                    if (state is ItemsLoadingState) {
+                      return SliverList(
+                        delegate: SliverChildListDelegate([
+                          const Padding(
+                            padding: EdgeInsets.all(24.0),
+                            child: Center(
+                              child: CircularProgressIndicator(),
+                            ),
+                          ),
+                        ]),
+                      );
+                    }
+                    if (state is MyItemsLoadedState) {
+                      return StreamBuilder<List<Item>>(
+                        stream: state.items,
+                        builder: (context, snapshot) {
+                          if (snapshot.hasError) {
+                            throw snapshot.error!;
+                          }
+                          if (snapshot.hasData) {
+                            if (snapshot.data!.isEmpty) {
+                              _resultNames.clear();
+                              return SliverList(
+                                delegate: SliverChildListDelegate([
+                                  const Padding(
+                                    padding: EdgeInsets.all(32),
+                                    child: Center(
+                                        child: Text("No auctions found...")),
+                                  ),
+                                ]),
+                              );
+                            }
+                            return SliverList(
+                              delegate: SliverChildBuilderDelegate(
+                                (BuildContext context, int index) {
+                                  return ItemPanel(item: snapshot.data![index]);
+                                },
+                                childCount: snapshot.data?.length,
+                              ),
+                            );
+                          } else {
                             return SliverList(
                               delegate: SliverChildListDelegate([
                                 const Padding(
-                                  padding: EdgeInsets.all(32),
+                                  padding: EdgeInsets.all(24.0),
                                   child: Center(
-                                      child: Text("No auctions found...")),
+                                    child: CircularProgressIndicator(),
+                                  ),
                                 ),
                               ]),
                             );
                           }
-                          return SliverList(
-                            delegate: SliverChildBuilderDelegate(
-                              (BuildContext context, int index) {
-                                return ItemPanel(item: snapshot.data![index]);
-                              },
-                              childCount: snapshot.data?.length,
-                            ),
-                          );
-                        } else {
-                          return SliverList(
-                            delegate: SliverChildListDelegate([
-                              const Padding(
-                                padding: EdgeInsets.all(24.0),
-                                child: Center(
-                                  child: CircularProgressIndicator(),
-                                ),
-                              ),
-                            ]),
-                          );
-                        }
-                      })
-                ],
-              );
-            }
-            return Container();
+                        },
+                      );
+                    }
+                    return Container();
+                  },
+                )
+              ],
+            );
           },
         ),
       ),

@@ -37,7 +37,7 @@ class BiddingPanel extends StatelessWidget {
               stream: state.bids,
               builder: (context, snapshot) {
                 if (snapshot.hasError) {
-                  // todo
+                  throw snapshot.error!;
                 }
                 if (snapshot.hasData) {
                   return Column(
@@ -120,23 +120,20 @@ class BidRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Expanded(
-          child: Text(
-            bid.userName,
-            style: const TextStyle(
-              fontSize: 25,
-              fontWeight: FontWeight.w300,
-            ),
+        Text(
+          bid.userName,
+          style: const TextStyle(
+            fontSize: 25,
+            fontWeight: FontWeight.w300,
           ),
         ),
-        Expanded(
-          child: Text(
-            bid.price.toString(),
-            style: const TextStyle(
-              fontSize: 25,
-              fontWeight: FontWeight.w300,
-            ),
+        Text(
+          bid.price.toString(),
+          style: const TextStyle(
+            fontSize: 25,
+            fontWeight: FontWeight.w300,
           ),
         )
       ],

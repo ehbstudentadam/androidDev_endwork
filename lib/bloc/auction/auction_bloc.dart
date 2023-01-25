@@ -23,7 +23,7 @@ class AuctionBloc extends Bloc<AuctionEvent, AuctionState> {
     on<LoadAuctionEvent>((event, emit) async {
       emit(AuctionLoadingState());
       try {
-        DbUser? databaseUser = await firestoreRepository.getDBUserByDBUserId(
+        DbUser? databaseUser = await firestoreRepository.getDbUserByDbUserId(
             dbUserID: event.item.sellerID);
         emit(AuctionLoadedState(event.item, databaseUser));
       } catch (e) {
@@ -31,7 +31,7 @@ class AuctionBloc extends Bloc<AuctionEvent, AuctionState> {
       }
     });
 
-    on<NewAuctionEvent>((event, emit) async {
+    on<OpenNewAuctionPageEvent>((event, emit) async {
       emit(NewAuctionLoadingState());
       try {
         emit(NewAuctionLoadedState());
@@ -45,7 +45,7 @@ class AuctionBloc extends Bloc<AuctionEvent, AuctionState> {
       try {
         String authUserId =
             await authRepository.getCurrentAuthenticatedUserId();
-        String dbUserId = await firestoreRepository.getDBUserIdByAuthUserId(
+        String dbUserId = await firestoreRepository.getDbUserIdByAuthUserId(
             authUserId: authUserId);
 
         Item item = Item(

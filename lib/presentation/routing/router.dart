@@ -11,7 +11,7 @@ import 'package:go_router/go_router.dart';
 import '../../data/models/item.dart';
 
 final _parentKey = GlobalKey<NavigatorState>();
-final _shellKey = GlobalKey<NavigatorState>();
+//final _shellKey = GlobalKey<NavigatorState>();
 
 final router = GoRouter(
   initialLocation: '/',
@@ -70,6 +70,7 @@ final router = GoRouter(
       parentNavigatorKey: _parentKey,
       builder: (context, state) => MyProfile(),
     ),
+    //For Future shellcode
     /*ShellRoute(
       navigatorKey: _shellKey,
       builder: (context, state, child) => Skeleton(widget: child),

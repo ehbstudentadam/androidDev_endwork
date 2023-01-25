@@ -17,6 +17,8 @@ class SearchAllItemByNameEvent extends ItemEvent {
   List<Object> get props => [name];
 }
 
+class GetAllItemsFromCurrentUserEvent extends ItemEvent {}
+
 class SearchItemsFromCurrentUserEvent extends ItemEvent {
   final String name;
 
@@ -26,9 +28,16 @@ class SearchItemsFromCurrentUserEvent extends ItemEvent {
   List<Object> get props => [name];
 }
 
-class GetAllItemsFromCurrentUserEvent extends ItemEvent {}
-
 class GetMyFavouritesEvent extends ItemEvent {}
+
+class SearchFavouritesEvent extends ItemEvent {
+  final String name;
+
+  SearchFavouritesEvent(this.name);
+
+  @override
+  List<Object> get props => [name];
+}
 
 class AddAsFavouriteEvent extends ItemEvent {
   final String itemId;
@@ -48,8 +57,6 @@ class RemoveAsFavouriteEvent extends ItemEvent {
   List<Object> get props => [itemId];
 }
 
-class EditItemEvent extends ItemEvent {}
-
 class DeleteItemEvent extends ItemEvent {
   final Item item;
 
@@ -57,4 +64,8 @@ class DeleteItemEvent extends ItemEvent {
 
   @override
   List<Object> get props => [item];
+}
+
+class EditItemEvent extends ItemEvent {
+  //todo
 }

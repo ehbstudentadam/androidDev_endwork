@@ -16,9 +16,7 @@ class UserLoadingState extends UserState {
 class UserLoadedState extends UserState {
   final String userName;
 
-
   UserLoadedState(this.userName);
-
   @override
   List<Object?> get props => [userName];
 }

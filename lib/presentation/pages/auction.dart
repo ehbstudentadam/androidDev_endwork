@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_image_slideshow/flutter_image_slideshow.dart';
 import 'package:go_router/go_router.dart';
 import '../../bloc/auction/auction_bloc.dart';
+import '../../bloc/auth/auth_bloc.dart';
 import '../../bloc/bid/bid_bloc.dart';
 import '../widgets/menu_drawer.dart';
 import '../widgets/user_drawer.dart';
@@ -21,6 +22,14 @@ class Auction extends StatelessWidget {
       endDrawer: const MenuDrawer(),
       body: MultiBlocListener(
         listeners: [
+          BlocListener<AuthBloc, AuthState>(
+            listener: (context, state) {
+              if (state is UnAuthenticated) {
+                // Navigate to the sign in screen when the user Signs Out
+                GoRouter.of(context).go('/sign_in');
+              }
+            },
+          ),
           BlocListener<AuctionBloc, AuctionState>(
             listener: (context, state) {
               if (state is AuctionErrorState) {
@@ -45,137 +54,149 @@ class Auction extends StatelessWidget {
           buildWhen: (previous, current) =>
               current is AuctionLoadedState && previous != current,
           builder: (context, state) {
-            if (state is AuctionLoadingState) {
-              // Showing the loading indicator while the user is signing in
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
-            }
-            if (state is AuctionLoadedState) {
-              return CustomScrollView(
-                slivers: [
-                  SliverAppBar(
+            return CustomScrollView(
+              slivers: [
+                SliverAppBar(
+                  shape: const ContinuousRectangleBorder(
+                    borderRadius: BorderRadius.only(
+                      bottomLeft: Radius.circular(16),
+                      bottomRight: Radius.circular(16),
+                    ),
+                  ),
+                  floating: true,
+                  pinned: true,
+                  snap: false,
+                  centerTitle: false,
+                  leading: IconButton(
+                    onPressed: () {
+                      return Scaffold.of(context).openDrawer();
+                    },
+                    icon: const Icon(Icons.account_circle),
+                  ),
+                  title: const Padding(
+                    padding: EdgeInsets.only(left: 8),
+                    child: Text(
+                      'DROP',
+                    ),
+                  ),
+                  actions: [
+                    IconButton(
+                        icon: const Icon(Icons.home),
+                        onPressed: () {
+                          if (GoRouter.of(context).location == '/dashboard' ||
+                              GoRouter.of(context).location == '/') {
+                            //do nothing
+                          } else {
+                            GoRouter.of(context).go('/');
+                          }
+                        }),
+                    IconButton(
+                        icon: const Icon(Icons.menu),
+                        onPressed: () {
+                          return Scaffold.of(context).openEndDrawer();
+                        }),
+                  ],
+                  bottom: AppBar(
                     shape: const ContinuousRectangleBorder(
                       borderRadius: BorderRadius.only(
                         bottomLeft: Radius.circular(16),
                         bottomRight: Radius.circular(16),
                       ),
                     ),
-                    floating: true,
-                    pinned: true,
-                    snap: false,
-                    centerTitle: false,
-                    leading: IconButton(
-                      onPressed: () {
-                        return Scaffold.of(context).openDrawer();
-                      },
-                      icon: const Icon(Icons.account_circle),
-                    ),
-                    title: const Padding(
-                      padding: EdgeInsets.only(left: 8),
-                      child: Text(
-                        'DROP',
-                      ),
-                    ),
-                    actions: [
-                      IconButton(
-                          icon: const Icon(Icons.home),
-                          onPressed: () {
-                            if (GoRouter.of(context).location == '/dashboard' ||
-                                GoRouter.of(context).location == '/') {
-                              //do nothing
-                            } else {
-                              GoRouter.of(context).go('/');
-                            }
-                          }),
-                      IconButton(
-                          icon: const Icon(Icons.menu),
-                          onPressed: () {
-                            return Scaffold.of(context).openEndDrawer();
-                          }),
-                    ],
-                    bottom: AppBar(
-                      shape: const ContinuousRectangleBorder(
-                        borderRadius: BorderRadius.only(
-                          bottomLeft: Radius.circular(16),
-                          bottomRight: Radius.circular(16),
-                        ),
-                      ),
-                      automaticallyImplyLeading: false,
-                      actions: <Widget>[Container()],
-                      title: Center(
-                        child: Text(item.title,
-                            style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 40,
-                                fontWeight: FontWeight.w400)),
-                      ),
+                    automaticallyImplyLeading: false,
+                    actions: <Widget>[Container()],
+                    title: Center(
+                      child: Text(item.title,
+                          style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 40,
+                              fontWeight: FontWeight.w400)),
                     ),
                   ),
-                  // Other Sliver Widgets
-                  SliverList(
-                    delegate: SliverChildListDelegate([
-                      Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Container(
-                          decoration: const BoxDecoration(
-                            borderRadius: BorderRadius.all(
-                              Radius.circular(8),
+                ),
+                // Other Sliver Widgets
+                SliverLayoutBuilder(
+                  builder: (context, constraints) {
+                    if (state is AuctionLoadingState) {
+                      return SliverList(
+                        delegate: SliverChildListDelegate([
+                          const Padding(
+                            padding: EdgeInsets.all(24.0),
+                            child: Center(
+                              child: CircularProgressIndicator(),
                             ),
-                            color: Color(0xECECECFF),
                           ),
-                          //color: const Color(0xECECECFF),
-                          child: ImageSlideshow(
-                            width: double.infinity,
-                            height: 200,
-                            initialPage: 0,
-                            isLoop: true,
-                            indicatorColor: Colors.deepPurple,
-                            indicatorBackgroundColor: Colors.grey,
-                            children: imageList(item),
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Text(
-                          state.dbUser.userName,
-                          style: Theme.of(context).textTheme.headline4,
-                        ),
-                      ),
-                      SizedBox(
-                        width: double.infinity,
-                        height: 200,
-                        child: BiddingPanel(
-                          item: item,
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.only(bottom: 16),
-                              child: Text(
-                                "Date created: ${item.timestamp}",
-                                style: Theme.of(context).textTheme.bodySmall,
+                        ]),
+                      );
+                    }
+                    if (state is AuctionLoadedState) {
+                      return SliverList(
+                        delegate: SliverChildListDelegate([
+                          Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Container(
+                              decoration: const BoxDecoration(
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(8),
+                                ),
+                                color: Color(0xECECECFF),
+                              ),
+                              //color: const Color(0xECECECFF),
+                              child: ImageSlideshow(
+                                width: double.infinity,
+                                height: 200,
+                                initialPage: 0,
+                                isLoop: true,
+                                indicatorColor: Colors.deepPurple,
+                                indicatorBackgroundColor: Colors.grey,
+                                children: imageList(item),
                               ),
                             ),
-                            Text(
-                              item.description,
-                              style: const TextStyle(
-                                  fontSize: 30, fontWeight: FontWeight.w300),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Text(
+                              state.dbUser.userName,
+                              style: Theme.of(context).textTheme.headline4,
                             ),
-                          ],
-                        ),
-                      )
-                    ]),
-                  )
-                ],
-              );
-            }
-            return Container();
+                          ),
+                          SizedBox(
+                            width: double.infinity,
+                            height: 200,
+                            child: BiddingPanel(
+                              item: item,
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(bottom: 16),
+                                  child: Text(
+                                    "Date created: ${item.timestamp}",
+                                    style:
+                                        Theme.of(context).textTheme.bodySmall,
+                                  ),
+                                ),
+                                Text(
+                                  item.description,
+                                  style: const TextStyle(
+                                      fontSize: 30,
+                                      fontWeight: FontWeight.w300),
+                                ),
+                              ],
+                            ),
+                          )
+                        ]),
+                      );
+                    }
+                    return Container();
+                  },
+                )
+              ],
+            );
           },
         ),
       ),

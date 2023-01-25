@@ -19,8 +19,9 @@ class BidBloc extends Bloc<BidEvent, BidState> {
         emit(BidsLoadingState());
         try {
           Item item = event.item!;
-          var bids =
-              firestoreRepository.getAllBidsByItemId(itemID: item.itemID).asBroadcastStream();
+          var bids = firestoreRepository
+              .getAllBidsByItemId(itemID: item.itemID)
+              .asBroadcastStream();
           emit(BidsLoadedState(bids));
         } catch (e) {
           emit(BidErrorState(e.toString()));
@@ -32,7 +33,7 @@ class BidBloc extends Bloc<BidEvent, BidState> {
       try {
         String authUserId =
             await authRepository.getCurrentAuthenticatedUserId();
-        String dbUserId = await firestoreRepository.getDBUserIdByAuthUserId(
+        String dbUserId = await firestoreRepository.getDbUserIdByAuthUserId(
             authUserId: authUserId);
 
         await firestoreRepository.createBid(
