@@ -28,11 +28,11 @@ class _SignInState extends State<SignIn> {
     return Scaffold(
       body: BlocListener<AuthBloc, AuthState>(
         listener: (context, state) {
-          if (state is Authenticated) {
+          if (state is AuthenticatedState) {
             // Navigating to the dashboard screen if the user is authenticated
             GoRouter.of(context).pushReplacement('/dashboard');
           }
-          if (state is AuthError) {
+          if (state is AuthErrorState) {
             // Showing the error message if the user has entered invalid credentials
             ScaffoldMessenger.of(context)
                 .showSnackBar(SnackBar(content: Text(state.error)));
@@ -40,13 +40,13 @@ class _SignInState extends State<SignIn> {
         },
         child: BlocBuilder<AuthBloc, AuthState>(
           builder: (context, state) {
-            if (state is Loading) {
+            if (state is LoadingState) {
               // Showing the loading indicator while the user is signing in
               return const Center(
                 child: CircularProgressIndicator(),
               );
             }
-            if (state is UnAuthenticated) {
+            if (state is UnAuthenticatedState) {
               // Showing the sign in form if the user is not authenticated
               return Center(
                 child: Padding(
@@ -149,7 +149,7 @@ class _SignInState extends State<SignIn> {
   void _authenticateWithEmailAndPassword(context) {
     if (_formKey.currentState!.validate()) {
       BlocProvider.of<AuthBloc>(context).add(
-        SignInRequested(_emailController.text, _passwordController.text),
+        SignInRequestedEvent(_emailController.text, _passwordController.text),
       );
     }
   }

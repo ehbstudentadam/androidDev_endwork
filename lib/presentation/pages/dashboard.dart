@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:animation_search_bar/animation_search_bar.dart';
 import 'package:drop_application/data/models/item.dart';
 import 'package:drop_application/presentation/widgets/item_panel.dart';
@@ -27,7 +26,7 @@ class Dashboard extends StatelessWidget {
         listeners: [
           BlocListener<AuthBloc, AuthState>(
             listener: (context, state) {
-              if (state is UnAuthenticated) {
+              if (state is UnAuthenticatedState) {
                 // Navigate to the sign in screen when the user Signs Out
                 GoRouter.of(context).pushReplacement('/sign_in');
               }

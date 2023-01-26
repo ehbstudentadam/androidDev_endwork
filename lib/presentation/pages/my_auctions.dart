@@ -25,7 +25,7 @@ class MyAuctions extends StatelessWidget {
         listeners: [
           BlocListener<AuthBloc, AuthState>(
             listener: (context, state) {
-              if (state is UnAuthenticated) {
+              if (state is UnAuthenticatedState) {
                 // Navigate to the sign in screen when the user Signs Out
                 GoRouter.of(context).go('/sign_in');
               }

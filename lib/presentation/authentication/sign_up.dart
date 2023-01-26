@@ -28,22 +28,22 @@ class _SignUpState extends State<SignUp> {
     return Scaffold(
       body: BlocConsumer<AuthBloc, AuthState>(
         listener: (context, state) {
-          if (state is Authenticated) {
+          if (state is AuthenticatedState) {
             // Navigating to the dashboard screen if the user is authenticated
             GoRouter.of(context).pushReplacement('/dashboard');
           }
-          if (state is AuthError) {
+          if (state is AuthErrorState) {
             // Displaying the error message if the user is not authenticated
             ScaffoldMessenger.of(context)
                 .showSnackBar(SnackBar(content: Text(state.error)));
           }
         },
         builder: (context, state) {
-          if (state is Loading) {
+          if (state is LoadingState) {
             // Displaying the loading indicator while the user is signing up
             return const Center(child: CircularProgressIndicator());
           }
-          if (state is UnAuthenticated) {
+          if (state is UnAuthenticatedState) {
             // Displaying the sign up form if the user is not authenticated
             return Center(
               child: Padding(
@@ -141,7 +141,7 @@ class _SignUpState extends State<SignUp> {
   void _createAccountWithEmailAndPassword(BuildContext context) {
     if (_formKey.currentState!.validate()) {
       BlocProvider.of<AuthBloc>(context).add(
-        SignUpRequested(
+        SignUpRequestedEvent(
           _emailController.text,
           _passwordController.text,
         ),

@@ -78,14 +78,68 @@ final router = GoRouter(
       builder: (context, state) => const NoNetwork(),
     ),
     //For Future shellcode
-    /*ShellRoute(
+/*    ShellRoute(
       navigatorKey: _shellKey,
       builder: (context, state, child) => Skeleton(widget: child),
       routes: [
         GoRoute(
+          path: '/',
+          parentNavigatorKey: _shellKey,
+          builder: (context, state) => const Authenticate(),
+        ),
+        GoRoute(
+          path: '/sign_up',
+          parentNavigatorKey: _shellKey,
+          builder: (context, state) => const SignUp(),
+        ),
+        GoRoute(
+          path: '/sign_in',
+          parentNavigatorKey: _shellKey,
+          builder: (context, state) => const SignIn(),
+        ),
+        GoRoute(
           path: '/dashboard',
           parentNavigatorKey: _shellKey,
-          builder: (context, state) => const Dashboard(),
+          builder: (context, state) => const Authenticate(),
+        ),
+        GoRoute(
+          path: '/auction',
+          name: 'auction',
+          parentNavigatorKey: _shellKey,
+          builder: (context, state) {
+            Item item = state.extra as Item;
+            return Auction(item: item);
+          },
+        ),
+        GoRoute(
+          path: '/new_auction',
+          name: 'new_auction',
+          parentNavigatorKey: _shellKey,
+          builder: (context, state) => NewAuction(),
+        ),
+        GoRoute(
+          path: '/my_auctions',
+          name: 'my_auctions',
+          parentNavigatorKey: _shellKey,
+          builder: (context, state) => MyAuctions(),
+        ),
+        GoRoute(
+          path: '/my_favourites',
+          name: 'my_favourites',
+          parentNavigatorKey: _shellKey,
+          builder: (context, state) => MyFavourites(),
+        ),
+        GoRoute(
+          path: '/my_profile',
+          name: 'my_profile',
+          parentNavigatorKey: _shellKey,
+          builder: (context, state) => MyProfile(),
+        ),
+        GoRoute(
+          path: '/no_network',
+          name: 'no_network',
+          parentNavigatorKey: _shellKey,
+          builder: (context, state) => const NoNetwork(),
         ),
       ],
     ),*/

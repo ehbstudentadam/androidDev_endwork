@@ -45,7 +45,7 @@ class UserDrawer extends StatelessWidget {
             leading: const Icon(Icons.exit_to_app),
             title: const Text('Logout'),
             onTap: () {
-              context.read<AuthBloc>().add(SignOutRequested());
+              context.read<AuthBloc>().add(SignOutRequestedEvent());
             },
           ),
         ],

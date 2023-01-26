@@ -55,7 +55,18 @@ Ik heb problemen ondervonden met een recente android update als je met Android v
 
 
 ## Project Status
-Concept is klaar.
+
+Je applicatie moet (minstens) volgende dingen bevatten:
+
+correct renderen op meerdere type devices (dus rekening houden met camera, hardware notches en dergelijke)
+minstens 3 verschillende pagina's waar (correct) tussen genavigeerd word (je mag gebruik maken van go_router package)
+- [x] je maakt gebruik van Bloc om je business logica, data layer en UI layer gescheiden te houden 
+- [x] je slaagt gegevens lokaal op in een lokale databank 
+- [x] je haalt op minstens 1 pagina gegevens op van het internet (denk ook aan foutmeldingen zoals wanneer ik de WiFi uitzet because I will)
+- [x] de UI is enigzinds mooi/clean (sliverappbar behandeld da safearea)
+- [x] je applicatie bevat een aantal images
+- [x] je applicatie bevat enkele animaties (Hero animaties tellen mee!)
+- [ ] Applicatie moet beschikbaar zijn in het Nederlands & Engels -> vertalingen Links to an external site.(meer talen mag natuurlijk ook)
 
 ## Dificulties
 Ik heb veel met streams en streambuilders zitten sukkelen en mezelf wat moeilijk gemaakt. Uiteindelijk had ik al heel wat bijgeleerd voor het
