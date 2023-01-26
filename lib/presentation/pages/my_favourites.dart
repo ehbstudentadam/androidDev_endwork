@@ -7,6 +7,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import '../../bloc/auth/auth_bloc.dart';
 import '../../bloc/item/item_bloc.dart';
+import '../../bloc/network/network_bloc.dart';
 
 class MyFavourites extends StatelessWidget {
   final _searchController = TextEditingController();
@@ -26,6 +27,13 @@ class MyFavourites extends StatelessWidget {
               if (state is UnAuthenticated) {
                 // Navigate to the sign in screen when the user Signs Out
                 GoRouter.of(context).go('/sign_in');
+              }
+            },
+          ),
+          BlocListener<NetworkBloc, NetworkState>(
+            listener: (context, state) async {
+              if (state is NetworkFailureState) {
+                GoRouter.of(context).push('/no_network');
               }
             },
           ),
@@ -156,7 +164,16 @@ class MyFavourites extends StatelessWidget {
                         ),
                       );
                     }
-                    return Container();
+                    return SliverList(
+                      delegate: SliverChildListDelegate([
+                        const Padding(
+                          padding: EdgeInsets.all(24.0),
+                          child: Center(
+                            child: CircularProgressIndicator(),
+                          ),
+                        ),
+                      ]),
+                    );
                   },
                 )
               ],

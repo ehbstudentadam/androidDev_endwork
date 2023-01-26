@@ -5,6 +5,7 @@ import 'package:drop_application/presentation/pages/auction.dart';
 import 'package:drop_application/presentation/pages/my_auctions.dart';
 import 'package:drop_application/presentation/pages/my_favourites.dart';
 import 'package:drop_application/presentation/pages/new_auction.dart';
+import 'package:drop_application/presentation/pages/no_network.dart';
 import 'package:drop_application/presentation/pages/profile_page.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -69,6 +70,12 @@ final router = GoRouter(
       name: 'my_profile',
       parentNavigatorKey: _parentKey,
       builder: (context, state) => MyProfile(),
+    ),
+    GoRoute(
+      path: '/no_network',
+      name: 'no_network',
+      parentNavigatorKey: _parentKey,
+      builder: (context, state) => const NoNetwork(),
     ),
     //For Future shellcode
     /*ShellRoute(

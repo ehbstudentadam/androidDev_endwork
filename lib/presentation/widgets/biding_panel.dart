@@ -4,13 +4,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../data/models/item.dart';
 
-class BiddingPanel extends StatelessWidget {
-  final _formKey = GlobalKey<FormState>();
-  final _bidController = TextEditingController();
-
+class BiddingPanel extends StatefulWidget {
   final Item item;
 
-  BiddingPanel({Key? key, required this.item}) : super(key: key);
+  const BiddingPanel({Key? key, required this.item}) : super(key: key);
+
+  @override
+  State<BiddingPanel> createState() => _BiddingPanelState();
+}
+
+class _BiddingPanelState extends State<BiddingPanel> {
+  final _formKey = GlobalKey<FormState>();
+  final _bidController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +30,7 @@ class BiddingPanel extends StatelessWidget {
           current is BidsLoadedState && previous != current,
       builder: (context, state) {
         if (state is BidsLoadingState) {
-          context.read<BidBloc>().add(LoadAllBidsEvent(item));
+          context.read<BidBloc>().add(LoadAllBidsEvent(widget.item));
           return const Center(
             child: CircularProgressIndicator(),
           );
@@ -48,7 +53,7 @@ class BiddingPanel extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              item.price.toString(),
+                              widget.item.price.toString(),
                               style: Theme.of(context).textTheme.headline4,
                             ),
                             const Spacer(),
@@ -65,9 +70,13 @@ class BiddingPanel extends StatelessWidget {
                                 autovalidateMode:
                                     AutovalidateMode.onUserInteraction,
                                 validator: (value) {
-                                  return value != null && value.length > 10
-                                      ? "Number to big"
-                                      : null;
+                                  if (value!.isEmpty ||
+                                      double.tryParse(value) == null ||
+                                      value.length > 10) {
+                                    return "Invalid number";
+                                  } else {
+                                    return null;
+                                  }
                                 },
                               ),
                             ),
@@ -75,7 +84,7 @@ class BiddingPanel extends StatelessWidget {
                               onPressed: () {
                                 if (_formKey.currentState!.validate()) {
                                   context.read<BidBloc>().add(CreateBidEvent(
-                                      item, double.parse(_bidController.text)));
+                                      widget.item, double.parse(_bidController.text)));
                                 }
                               },
                               child: Text(

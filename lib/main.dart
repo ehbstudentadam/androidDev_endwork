@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'bloc/auction/auction_bloc.dart';
 import 'bloc/auth/auth_bloc.dart';
+import 'bloc/network/network_bloc.dart';
 import 'bloc/user/user_bloc.dart';
 import 'data/repository/auth_repository.dart';
 
@@ -37,6 +38,9 @@ class MyApp extends StatelessWidget {
       child: MultiBlocProvider(
         providers: [
           BlocProvider(
+            create: (context) => NetworkBloc()..add(NetworkObserveEvent()),
+          ),
+          BlocProvider(
             create: (context) => AuthBloc(
               authRepository: RepositoryProvider.of(context),
             ),
@@ -65,7 +69,7 @@ class MyApp extends StatelessWidget {
               firestoreRepository: RepositoryProvider.of(context),
               authRepository: RepositoryProvider.of(context),
             ),
-          )
+          ),
         ],
         child: MaterialApp.router(
           debugShowCheckedModeBanner: false,

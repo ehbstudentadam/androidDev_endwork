@@ -7,6 +7,7 @@ import 'package:go_router/go_router.dart';
 import '../../bloc/auction/auction_bloc.dart';
 import '../../bloc/auth/auth_bloc.dart';
 import '../../bloc/bid/bid_bloc.dart';
+import '../../bloc/network/network_bloc.dart';
 import '../widgets/menu_drawer.dart';
 import '../widgets/user_drawer.dart';
 
@@ -27,6 +28,13 @@ class Auction extends StatelessWidget {
               if (state is UnAuthenticated) {
                 // Navigate to the sign in screen when the user Signs Out
                 GoRouter.of(context).go('/sign_in');
+              }
+            },
+          ),
+          BlocListener<NetworkBloc, NetworkState>(
+            listener: (context, state) async {
+              if (state is NetworkFailureState) {
+                GoRouter.of(context).push('/no_network');
               }
             },
           ),
@@ -192,7 +200,9 @@ class Auction extends StatelessWidget {
                         ]),
                       );
                     }
-                    return Container();
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
                   },
                 )
               ],

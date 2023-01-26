@@ -15,3 +15,11 @@ class UpdateUserNameEvent extends UserEvent {
   @override
   List<Object?> get props => [userName];
 }
+
+class UserErrorEvent extends UserEvent {
+  final String error;
+
+  UserErrorEvent(this.error);
+  @override
+  List<Object> get props => [error];
+}

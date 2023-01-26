@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:animation_search_bar/animation_search_bar.dart';
 import 'package:drop_application/data/models/item.dart';
 import 'package:drop_application/presentation/widgets/item_panel.dart';
@@ -8,6 +10,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import '../../bloc/auth/auth_bloc.dart';
 import '../../bloc/item/item_bloc.dart';
+import '../../bloc/network/network_bloc.dart';
 
 class Dashboard extends StatelessWidget {
   final TextEditingController _searchController = TextEditingController();
@@ -26,7 +29,7 @@ class Dashboard extends StatelessWidget {
             listener: (context, state) {
               if (state is UnAuthenticated) {
                 // Navigate to the sign in screen when the user Signs Out
-                GoRouter.of(context).go('/sign_in');
+                GoRouter.of(context).pushReplacement('/sign_in');
               }
             },
           ),
@@ -38,6 +41,16 @@ class Dashboard extends StatelessWidget {
               }
               if (state is RefreshPageState) {
                 context.read<ItemBloc>().add(LoadAllItemsEvent());
+              }
+            },
+          ),
+          BlocListener<NetworkBloc, NetworkState>(
+            listener: (context, state) async {
+              if (state is NetworkFailureState) {
+                GoRouter.of(context).push('/no_network');
+                context
+                    .read<ItemBloc>()
+                    .add(ItemErrorEvent('Network connection lost...'));
               }
             },
           ),
@@ -156,12 +169,24 @@ class Dashboard extends StatelessWidget {
                           ),
                         );
                       } else {
+                        Timer(const Duration(seconds: 1), () {
+                          context
+                              .read<ItemBloc>()
+                              .add(LoadAllItemsEvent());
+                        });
                         return SliverList(
                           delegate: SliverChildListDelegate([
-                            const Padding(
-                              padding: EdgeInsets.all(24.0),
-                              child: Center(
-                                child: CircularProgressIndicator(),
+                            Padding(
+                              padding: const EdgeInsets.all(24.0),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: const [
+                                  Text("Refreshing..."),
+                                  Padding(
+                                    padding: EdgeInsets.all(24.0),
+                                    child: CircularProgressIndicator(),
+                                  ),
+                                ],
                               ),
                             ),
                           ]),
@@ -172,7 +197,24 @@ class Dashboard extends StatelessWidget {
                 ],
               );
             }
-            return Container();
+            Timer(const Duration(seconds: 1), () {
+              context
+                  .read<ItemBloc>()
+                  .add(LoadAllItemsEvent());
+            });
+            return Padding(
+              padding: const EdgeInsets.all(24.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: const [
+                  Text("Refreshing..."),
+                  Padding(
+                    padding: EdgeInsets.all(24.0),
+                    child: CircularProgressIndicator(),
+                  ),
+                ],
+              ),
+            );
           },
         ),
       ),

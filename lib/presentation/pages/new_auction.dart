@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import '../../bloc/auth/auth_bloc.dart';
 import '../../bloc/item/item_bloc.dart';
+import '../../bloc/network/network_bloc.dart';
 import '../widgets/menu_drawer.dart';
 import '../widgets/user_drawer.dart';
 
@@ -25,13 +26,24 @@ class NewAuction extends StatelessWidget {
     return Scaffold(
       drawer: const UserDrawer(),
       endDrawer: const MenuDrawer(),
-      body: BlocListener<AuthBloc, AuthState>(
-        listener: (context, state) {
-          if (state is UnAuthenticated) {
-            // Navigate to the sign in screen when the user Signs Out
-            GoRouter.of(context).go('/sign_in');
-          }
-        },
+      body: MultiBlocListener(
+        listeners: [
+          BlocListener<AuthBloc, AuthState>(
+            listener: (context, state) {
+              if (state is UnAuthenticated) {
+                // Navigate to the sign in screen when the user Signs Out
+                GoRouter.of(context).go('/sign_in');
+              }
+            },
+          ),
+          BlocListener<NetworkBloc, NetworkState>(
+            listener: (context, state) async {
+              if (state is NetworkFailureState) {
+                GoRouter.of(context).push('/no_network');
+              }
+            },
+          ),
+        ],
         child: BlocConsumer<AuctionBloc, AuctionState>(
           listener: (context, state) {
             if (state is AuctionErrorState) {
@@ -245,7 +257,9 @@ class NewAuction extends StatelessWidget {
                                       autovalidateMode:
                                           AutovalidateMode.onUserInteraction,
                                       validator: (value) {
-                                        if (value!.isEmpty || double.tryParse(value) == null || value.length > 10){
+                                        if (value!.isEmpty ||
+                                            double.tryParse(value) == null ||
+                                            value.length > 10) {
                                           return "Invalid number";
                                         } else {
                                           return null;
@@ -284,7 +298,7 @@ class NewAuction extends StatelessWidget {
                                       autovalidateMode: AutovalidateMode.always,
                                       validator: (value) {
                                         return value!.length > 3 &&
-                                            value.length < 100
+                                                value.length < 100
                                             ? null
                                             : "Description between 3 ~ 100 characters";
                                       },
@@ -405,11 +419,27 @@ class NewAuction extends StatelessWidget {
               );
             }
             if (state is PostNewAuctionLoadingState) {
-              return const Center(
-                child: CircularProgressIndicator(),
+              return SliverList(
+                delegate: SliverChildListDelegate([
+                  const Padding(
+                    padding: EdgeInsets.all(24.0),
+                    child: Center(
+                      child: CircularProgressIndicator(),
+                    ),
+                  ),
+                ]),
               );
             }
-            return Container();
+            return SliverList(
+              delegate: SliverChildListDelegate([
+                const Padding(
+                  padding: EdgeInsets.all(24.0),
+                  child: Center(
+                    child: CircularProgressIndicator(),
+                  ),
+                ),
+              ]),
+            );
           },
         ),
       ),

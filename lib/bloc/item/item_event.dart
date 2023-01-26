@@ -66,6 +66,14 @@ class DeleteItemEvent extends ItemEvent {
   List<Object> get props => [item];
 }
 
+class ItemErrorEvent extends ItemEvent {
+  final String error;
+
+  ItemErrorEvent(this.error);
+  @override
+  List<Object> get props => [error];
+}
+
 class EditItemEvent extends ItemEvent {
   //todo
 }

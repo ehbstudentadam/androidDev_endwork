@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import '../../bloc/auth/auth_bloc.dart';
 import '../../bloc/item/item_bloc.dart';
+import '../../bloc/network/network_bloc.dart';
 import '../../bloc/user/user_bloc.dart';
 
 class MyProfile extends StatelessWidget {
@@ -37,10 +38,15 @@ class MyProfile extends StatelessWidget {
               }
             },
           ),
+          BlocListener<NetworkBloc, NetworkState>(
+            listener: (context, state) async {
+              if (state is NetworkFailureState) {
+                GoRouter.of(context).push('/no_network');
+              }
+            },
+          ),
         ],
         child: BlocBuilder<UserBloc, UserState>(
-          /*buildWhen: (previous, current) =>
-          previous != current && current is MyFavouritesLoadedState,*/
           builder: (context, state) {
             return CustomScrollView(
               slivers: [
@@ -214,7 +220,16 @@ class MyProfile extends StatelessWidget {
                         ]),
                       );
                     }
-                    return Container();
+                    return SliverList(
+                      delegate: SliverChildListDelegate([
+                        const Padding(
+                          padding: EdgeInsets.all(24.0),
+                          child: Center(
+                            child: CircularProgressIndicator(),
+                          ),
+                        ),
+                      ]),
+                    );
                   },
                 )
               ],

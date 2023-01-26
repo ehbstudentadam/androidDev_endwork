@@ -43,5 +43,14 @@ class UserBloc extends Bloc<UserEvent, UserState> {
         emit(UserErrorState(e.toString()));
       }
     });
+
+    on<UserErrorEvent>((event, emit) {
+      try {
+        emit(UserLoadingState());
+        emit(UserErrorState(event.error));
+      } catch (e) {
+        emit(UserErrorState(e.toString()));
+      }
+    });
   }
 }

@@ -25,7 +25,7 @@ class ItemBloc extends Bloc<ItemEvent, ItemState> {
             await authRepository.getCurrentAuthenticatedUserId();
         String dbUserId = await firestoreRepository.getDbUserIdByAuthUserId(
             authUserId: authUserId);
-        var items = firestoreRepository.getAllItems(currentDbUser: dbUserId);
+        var items = firestoreRepository.getAllItems(currentDbUser: dbUserId).asBroadcastStream();
         emit(ItemsLoadedState(items));
       } catch (e) {
         emit(ItemErrorState(e.toString()));
@@ -149,6 +149,15 @@ class ItemBloc extends Bloc<ItemEvent, ItemState> {
         await firestoreRepository.removeItemFromMyFavourites(
             itemId: event.itemId, dbUserId: dbUserId);
         emit(RefreshPageState());
+      } catch (e) {
+        emit(ItemErrorState(e.toString()));
+      }
+    });
+
+    on<ItemErrorEvent>((event, emit) {
+      try {
+        emit(ItemsLoadingState());
+        emit(ItemErrorState(event.error));
       } catch (e) {
         emit(ItemErrorState(e.toString()));
       }
