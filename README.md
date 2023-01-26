@@ -22,6 +22,9 @@ Flutter project voor mijn examen.
 Dit is een 2e hands app genaamd DROP waar je items kan op auctioneeren.
 Je kan een auction aanmaken, bieden, opslaan in favourites, verwijderen etc...
 
+Je kan fotos uploaden, ik heb (nog) geen image compressing geimplementeerd dus is aan te raden om kleine fotos te gebruiken
+om het laden wat sneller te maken
+
 
 ## Technologies Used
 -  Flutter

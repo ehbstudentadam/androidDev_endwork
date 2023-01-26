@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:localization/localization.dart';
 import '../../bloc/item/item_bloc.dart';
 import '../../data/models/item.dart';
+import 'package:flutter/scheduler.dart';
 
 class ItemPanel extends StatelessWidget {
   final Item item;
@@ -23,7 +24,9 @@ class ItemPanel extends StatelessWidget {
               GoRouter.of(context).location == '/') {
             GoRouter.of(context).push('/auction', extra: item);
           } else {
-            GoRouter.of(context).pushReplacement('/auction', extra: item);
+            SchedulerBinding.instance.addPostFrameCallback((_) {
+              GoRouter.of(context).pushReplacement('/auction', extra: item);
+            });
           }
         },
         child: Container(
