@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:localization/localization.dart';
 import '../../bloc/auth/auth_bloc.dart';
 import '../../bloc/user/user_bloc.dart';
 
@@ -13,8 +14,8 @@ class UserDrawer extends StatelessWidget {
       child: ListView(
         padding: EdgeInsets.zero,
         children: <Widget>[
-          const DrawerHeader(
-            decoration: BoxDecoration(
+          DrawerHeader(
+            decoration: const BoxDecoration(
               color: Colors.deepPurpleAccent,
               image: DecorationImage(
                 fit: BoxFit.cover,
@@ -22,13 +23,13 @@ class UserDrawer extends StatelessWidget {
               ),
             ),
             child: Text(
-              'Account',
-              style: TextStyle(color: Colors.white, fontSize: 25),
+              'Account'.i18n(),
+              style: const TextStyle(color: Colors.white, fontSize: 25),
             ),
           ),
           ListTile(
             leading: const Icon(Icons.verified_user),
-            title: const Text('Profile'),
+            title: Text('my-profile'.i18n()),
             onTap: () {
               context.read<UserBloc>().add(LoadUserNameEvent());
               if (GoRouter.of(context).location == '/dashboard' ||
@@ -43,7 +44,7 @@ class UserDrawer extends StatelessWidget {
           ),
           ListTile(
             leading: const Icon(Icons.exit_to_app),
-            title: const Text('Logout'),
+            title: Text('logout'.i18n()),
             onTap: () {
               context.read<AuthBloc>().add(SignOutRequestedEvent());
             },

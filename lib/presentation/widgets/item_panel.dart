@@ -3,6 +3,7 @@ import 'package:drop_application/bloc/auction/auction_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:localization/localization.dart';
 import '../../bloc/item/item_bloc.dart';
 import '../../data/models/item.dart';
 
@@ -108,9 +109,9 @@ class ItemPanel extends StatelessWidget {
                                             context: context,
                                             type: CoolAlertType.confirm,
                                             text:
-                                                "Are you sure you want to delete ${item.title}?",
-                                            confirmBtnText: "Delete",
-                                            cancelBtnText: "Cancel",
+                                                "Are-you-sure-delete?".i18n([item.title]),
+                                            confirmBtnText: "Delete".i18n(),
+                                            cancelBtnText: "Cancel".i18n(),
                                             onConfirmBtnTap: () {
                                               context
                                                   .read<ItemBloc>()

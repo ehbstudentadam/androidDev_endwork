@@ -3,6 +3,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:localization/localization.dart';
 import '../../bloc/auth/auth_bloc.dart';
 import '../../bloc/item/item_bloc.dart';
 import '../../bloc/network/network_bloc.dart';
@@ -53,7 +54,7 @@ class NewAuction extends StatelessWidget {
             if (state is PostNewAuctionLoadedState) {
               GoRouter.of(context).go('/');
               ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text("Auction created!")));
+                  SnackBar(content: Text("Auction-created!".i18n())));
             }
           },
           builder: (context, state) {
@@ -83,10 +84,10 @@ class NewAuction extends StatelessWidget {
                       },
                       icon: const Icon(Icons.account_circle),
                     ),
-                    title: const Padding(
-                      padding: EdgeInsets.only(left: 8),
+                    title: Padding(
+                      padding: const EdgeInsets.only(left: 8),
                       child: Text(
-                        'DROP',
+                        'DROP'.i18n(),
                       ),
                     ),
                     actions: [
@@ -115,9 +116,9 @@ class NewAuction extends StatelessWidget {
                       ),
                       automaticallyImplyLeading: false,
                       actions: <Widget>[Container()],
-                      title: const Center(
-                        child: Text("New auction",
-                            style: TextStyle(
+                      title: Center(
+                        child: Text("New-auction".i18n(),
+                            style: const TextStyle(
                                 color: Colors.white,
                                 fontSize: 40,
                                 fontWeight: FontWeight.w400)),
@@ -152,9 +153,9 @@ class NewAuction extends StatelessWidget {
                                       ),
                                     ),
                                   ),
-                                  label: const Text(
-                                    'Upload images',
-                                    style: TextStyle(
+                                  label: Text(
+                                    'Upload-images'.i18n(),
+                                    style: const TextStyle(
                                         color: Colors.white,
                                         fontSize: 20,
                                         fontWeight: FontWeight.w400),
@@ -174,16 +175,16 @@ class NewAuction extends StatelessWidget {
 
                                     if (results == null) {
                                       ScaffoldMessenger.of(context)
-                                          .showSnackBar(const SnackBar(
-                                        content: Text('No files selected'),
+                                          .showSnackBar(SnackBar(
+                                        content: Text('No-files-selected'.i18n()),
                                       ));
                                       return;
                                     }
                                     if (results.paths.length > 5) {
                                       ScaffoldMessenger.of(context)
-                                          .showSnackBar(const SnackBar(
+                                          .showSnackBar(SnackBar(
                                         content:
-                                            Text('Maximum 5 files allowed'),
+                                            Text('Maximum-5-files-allowed'.i18n()),
                                       ));
                                       return;
                                     }
@@ -199,7 +200,7 @@ class NewAuction extends StatelessWidget {
                                   Padding(
                                     padding: const EdgeInsets.only(bottom: 8),
                                     child: Text(
-                                      "Auction title:",
+                                      "Auction-title:".i18n(),
                                       style:
                                           Theme.of(context).textTheme.headline4,
                                     ),
@@ -222,7 +223,7 @@ class NewAuction extends StatelessWidget {
                                         return value!.length > 3 &&
                                                 value.length < 20
                                             ? null
-                                            : "Title between 3 ~ 20 characters";
+                                            : "Title-between-3-20-characters".i18n();
                                       },
                                     ),
                                   ),
@@ -237,7 +238,7 @@ class NewAuction extends StatelessWidget {
                                   Padding(
                                     padding: const EdgeInsets.only(bottom: 8),
                                     child: Text(
-                                      "Price:",
+                                      "Price:".i18n(),
                                       style:
                                           Theme.of(context).textTheme.headline4,
                                     ),
@@ -260,7 +261,7 @@ class NewAuction extends StatelessWidget {
                                         if (value!.isEmpty ||
                                             double.tryParse(value) == null ||
                                             value.length > 10) {
-                                          return "Invalid number";
+                                          return "Invalid-number".i18n();
                                         } else {
                                           return null;
                                         }
@@ -278,7 +279,7 @@ class NewAuction extends StatelessWidget {
                                   Padding(
                                     padding: const EdgeInsets.only(bottom: 8),
                                     child: Text(
-                                      "Description:",
+                                      "Description:".i18n(),
                                       style:
                                           Theme.of(context).textTheme.headline4,
                                     ),
@@ -295,12 +296,12 @@ class NewAuction extends StatelessWidget {
                                         border: OutlineInputBorder(),
                                       ),
                                       keyboardType: TextInputType.text,
-                                      autovalidateMode: AutovalidateMode.always,
+                                      autovalidateMode: AutovalidateMode.onUserInteraction,
                                       validator: (value) {
                                         return value!.length > 3 &&
                                                 value.length < 100
                                             ? null
-                                            : "Description between 3 ~ 100 characters";
+                                            : "Description-between-3-100-characters".i18n();
                                       },
                                     ),
                                   ),
@@ -336,9 +337,9 @@ class NewAuction extends StatelessWidget {
                                               ),
                                             ),
                                           ),
-                                          label: const Text(
-                                            'Cancel',
-                                            style: TextStyle(
+                                          label: Text(
+                                            'Cancel'.i18n(),
+                                            style: const TextStyle(
                                                 color: Colors.white,
                                                 fontSize: 20,
                                                 fontWeight: FontWeight.w400),
@@ -375,9 +376,9 @@ class NewAuction extends StatelessWidget {
                                               ),
                                             ),
                                           ),
-                                          label: const Text(
-                                            'Post',
-                                            style: TextStyle(
+                                          label: Text(
+                                            'Post'.i18n(),
+                                            style: const TextStyle(
                                                 color: Colors.white,
                                                 fontSize: 20,
                                                 fontWeight: FontWeight.w400),
@@ -400,7 +401,7 @@ class NewAuction extends StatelessWidget {
                                               ScaffoldMessenger.of(context)
                                                   .showSnackBar(const SnackBar(
                                                       content: Text(
-                                                          "At least one image must be selected!")));
+                                                          "At-least-one-image-must-be-selected!")));
                                             }
                                           },
                                         ),

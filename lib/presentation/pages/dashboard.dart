@@ -7,6 +7,7 @@ import 'package:drop_application/presentation/widgets/user_drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:localization/localization.dart';
 import '../../bloc/auth/auth_bloc.dart';
 import '../../bloc/item/item_bloc.dart';
 import '../../bloc/network/network_bloc.dart';
@@ -49,7 +50,7 @@ class Dashboard extends StatelessWidget {
                 GoRouter.of(context).push('/no_network');
                 context
                     .read<ItemBloc>()
-                    .add(ItemErrorEvent('Network connection lost...'));
+                    .add(ItemErrorEvent('Network-connection-lost...'.i18n()));
               }
             },
           ),
@@ -84,8 +85,8 @@ class Dashboard extends StatelessWidget {
                       },
                       icon: const Icon(Icons.account_circle),
                     ),
-                    title: const Center(
-                      child: Text('DROP'),
+                    title: Center(
+                      child: Text('DROP'.i18n()),
                     ),
                     actions: [
                       IconButton(
@@ -118,7 +119,7 @@ class Dashboard extends StatelessWidget {
                       title: AnimationSearchBar(
                         closeIconColor: Colors.white,
                         isBackButtonVisible: false,
-                        centerTitle: 'Dashboard',
+                        centerTitle: 'Dashboard'.i18n(),
                         centerTitleStyle: const TextStyle(
                             fontWeight: FontWeight.w500,
                             color: Colors.white,
@@ -151,10 +152,10 @@ class Dashboard extends StatelessWidget {
                           _resultNames.clear();
                           return SliverList(
                             delegate: SliverChildListDelegate([
-                              const Padding(
-                                padding: EdgeInsets.all(32),
+                              Padding(
+                                padding: const EdgeInsets.all(32),
                                 child:
-                                    Center(child: Text("No auctions found...")),
+                                    Center(child: Text("No-auctions-found...".i18n())),
                               ),
                             ]),
                           );

@@ -5,6 +5,7 @@ import 'package:drop_application/presentation/widgets/user_drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:localization/localization.dart';
 import '../../bloc/auth/auth_bloc.dart';
 import '../../bloc/item/item_bloc.dart';
 import '../../bloc/network/network_bloc.dart';
@@ -72,8 +73,8 @@ class MyFavourites extends StatelessWidget {
                     },
                     icon: const Icon(Icons.account_circle),
                   ),
-                  title: const Center(
-                    child: Text('DROP'),
+                  title: Center(
+                    child: Text('DROP'.i18n()),
                   ),
                   actions: [
                     IconButton(
@@ -109,7 +110,7 @@ class MyFavourites extends StatelessWidget {
                     title: AnimationSearchBar(
                       closeIconColor: Colors.white,
                       isBackButtonVisible: false,
-                      centerTitle: 'My Favourites',
+                      centerTitle: 'My-Favourites'.i18n(),
                       centerTitleStyle: const TextStyle(
                           fontWeight: FontWeight.w500,
                           color: Colors.white,
@@ -151,10 +152,10 @@ class MyFavourites extends StatelessWidget {
                         delegate: SliverChildBuilderDelegate(
                           (BuildContext context, int index) {
                             if (state.items == null || state.items!.isEmpty) {
-                              return const Padding(
-                                padding: EdgeInsets.all(32),
+                              return Padding(
+                                padding: const EdgeInsets.all(32),
                                 child:
-                                    Center(child: Text("No auctions found...")),
+                                    Center(child: Text("No-auctions-found...".i18n())),
                               );
                             } else {
                               return ItemPanel(item: state.items![index]);

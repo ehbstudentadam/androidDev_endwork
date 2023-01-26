@@ -66,7 +66,7 @@ minstens 3 verschillende pagina's waar (correct) tussen genavigeerd word (je mag
 - [x] de UI is enigzinds mooi/clean (sliverappbar behandeld da safearea)
 - [x] je applicatie bevat een aantal images
 - [x] je applicatie bevat enkele animaties (Hero animaties tellen mee!)
-- [ ] Applicatie moet beschikbaar zijn in het Nederlands & Engels -> vertalingen Links to an external site.(meer talen mag natuurlijk ook)
+- [x] Applicatie moet beschikbaar zijn in het Nederlands & Engels -> vertalingen Links to an external site.(meer talen mag natuurlijk ook)
 
 ## Dificulties
 Ik heb veel met streams en streambuilders zitten sukkelen en mezelf wat moeilijk gemaakt. Uiteindelijk had ik al heel wat bijgeleerd voor het

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_image_slideshow/flutter_image_slideshow.dart';
 import 'package:go_router/go_router.dart';
+import 'package:localization/localization.dart';
 import '../../bloc/auction/auction_bloc.dart';
 import '../../bloc/auth/auth_bloc.dart';
 import '../../bloc/bid/bid_bloc.dart';
@@ -81,10 +82,10 @@ class Auction extends StatelessWidget {
                     },
                     icon: const Icon(Icons.account_circle),
                   ),
-                  title: const Padding(
-                    padding: EdgeInsets.only(left: 8),
+                  title: Padding(
+                    padding: const EdgeInsets.only(left: 8),
                     child: Text(
-                      'DROP',
+                      'DROP'.i18n(),
                     ),
                   ),
                   actions: [
@@ -183,7 +184,7 @@ class Auction extends StatelessWidget {
                                 Padding(
                                   padding: const EdgeInsets.only(bottom: 16),
                                   child: Text(
-                                    "Date created: ${item.timestamp}",
+                                    "Date-created:".i18n([item.timestamp.toString()]),
                                     style:
                                         Theme.of(context).textTheme.bodySmall,
                                   ),

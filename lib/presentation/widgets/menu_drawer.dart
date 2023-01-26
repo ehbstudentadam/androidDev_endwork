@@ -2,6 +2,7 @@ import 'package:drop_application/bloc/item/item_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:localization/localization.dart';
 import '../../bloc/auction/auction_bloc.dart';
 
 class MenuDrawer extends StatelessWidget {
@@ -13,8 +14,8 @@ class MenuDrawer extends StatelessWidget {
       child: ListView(
         padding: EdgeInsets.zero,
         children: <Widget>[
-          const DrawerHeader(
-            decoration: BoxDecoration(
+          DrawerHeader(
+            decoration: const BoxDecoration(
               color: Colors.deepPurpleAccent,
               image: DecorationImage(
                 fit: BoxFit.fill,
@@ -22,13 +23,13 @@ class MenuDrawer extends StatelessWidget {
               ),
             ),
             child: Text(
-              'Menu',
-              style: TextStyle(color: Colors.white, fontSize: 25),
+              'Menu'.i18n(),
+              style: const TextStyle(color: Colors.white, fontSize: 25),
             ),
           ),
           ListTile(
             leading: const Icon(Icons.sell),
-            title: const Text('My Auctions'),
+            title: Text('my-auctions'.i18n()),
             onTap: () {
               context.read<ItemBloc>().add(GetAllItemsFromCurrentUserEvent());
               if (GoRouter.of(context).location == '/dashboard' ||
@@ -43,7 +44,7 @@ class MenuDrawer extends StatelessWidget {
           ),
           ListTile(
             leading: const Icon(Icons.post_add),
-            title: const Text('New Auction'),
+            title: Text('new-auction'.i18n()),
             onTap: () {
               context.read<AuctionBloc>().add(OpenNewAuctionPageEvent());
               if (GoRouter.of(context).location == '/dashboard' ||
@@ -58,7 +59,7 @@ class MenuDrawer extends StatelessWidget {
           ),
           ListTile(
             leading: const Icon(Icons.favorite),
-            title: const Text('Favourites'),
+            title: Text('favourites'.i18n()),
             onTap: () {
               context.read<ItemBloc>().add(GetMyFavouritesEvent());
               if (GoRouter.of(context).location == '/dashboard' ||

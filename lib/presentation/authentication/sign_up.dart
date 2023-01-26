@@ -2,6 +2,7 @@ import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:localization/localization.dart';
 import '../../bloc/auth/auth_bloc.dart';
 
 class SignUp extends StatefulWidget {
@@ -53,9 +54,9 @@ class _SignUpState extends State<SignUp> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Text(
-                        "Sign Up",
-                        style: TextStyle(
+                      Text(
+                        "Sign-Up".i18n(),
+                        style: const TextStyle(
                           fontSize: 38,
                           fontWeight: FontWeight.bold,
                         ),
@@ -70,16 +71,16 @@ class _SignUpState extends State<SignUp> {
                             children: [
                               TextFormField(
                                 controller: _emailController,
-                                decoration: const InputDecoration(
-                                  hintText: "Email",
-                                  border: OutlineInputBorder(),
+                                decoration: InputDecoration(
+                                  hintText: "Email".i18n(),
+                                  border: const OutlineInputBorder(),
                                 ),
                                 autovalidateMode:
                                     AutovalidateMode.onUserInteraction,
                                 validator: (value) {
                                   return value != null &&
                                           !EmailValidator.validate(value)
-                                      ? 'Enter a valid email'
+                                      ? 'Enter-a-valid-email'.i18n()
                                       : null;
                                 },
                               ),
@@ -88,15 +89,15 @@ class _SignUpState extends State<SignUp> {
                               ),
                               TextFormField(
                                 controller: _passwordController,
-                                decoration: const InputDecoration(
-                                  hintText: "Password",
-                                  border: OutlineInputBorder(),
+                                decoration: InputDecoration(
+                                  hintText: "Password".i18n(),
+                                  border: const OutlineInputBorder(),
                                 ),
                                 autovalidateMode:
                                     AutovalidateMode.onUserInteraction,
                                 validator: (value) {
                                   return value != null && value.length < 6
-                                      ? "Enter min. 6 characters"
+                                      ? "Enter-min.-6-characters".i18n()
                                       : null;
                                 },
                               ),
@@ -109,22 +110,22 @@ class _SignUpState extends State<SignUp> {
                                   onPressed: () {
                                     _createAccountWithEmailAndPassword(context);
                                   },
-                                  child: const Text('Sign Up'),
+                                  child: Text('Sign-Up'.i18n()),
                                 ),
                               )
                             ],
                           ),
                         ),
                       ),
-                      const Padding(
-                        padding: EdgeInsets.only(top: 44, bottom: 8),
-                        child: Text("Already have an account?"),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 44, bottom: 8),
+                        child: Text("Already-have-an-account?".i18n()),
                       ),
                       OutlinedButton(
                         onPressed: () {
                           GoRouter.of(context).pushReplacement('/sign_in');
                         },
-                        child: const Text("Sign In"),
+                        child: Text("Sign-In".i18n()),
                       ),
                     ],
                   ),

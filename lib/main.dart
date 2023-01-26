@@ -6,6 +6,8 @@ import 'package:drop_application/presentation/routing/router.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:localization/localization.dart';
 import 'bloc/auction/auction_bloc.dart';
 import 'bloc/auth/auth_bloc.dart';
 import 'bloc/network/network_bloc.dart';
@@ -23,6 +25,8 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    LocalJsonLocalization.delegate.directories = ['lib/i18n'];
+
     return MultiRepositoryProvider(
       providers: [
         RepositoryProvider(
@@ -72,6 +76,18 @@ class MyApp extends StatelessWidget {
           ),
         ],
         child: MaterialApp.router(
+          localizationsDelegates: [
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+            // delegate from localization package.
+            LocalJsonLocalization.delegate,
+          ],
+          supportedLocales: const [
+            Locale('en', 'US'),
+            Locale('en', 'GB'),
+            Locale('nl', 'BE'),
+          ],
           debugShowCheckedModeBanner: false,
           theme: ThemeData(primarySwatch: Colors.deepPurple),
           routerConfig: router,

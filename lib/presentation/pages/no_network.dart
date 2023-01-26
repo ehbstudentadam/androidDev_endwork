@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:localization/localization.dart';
 import '../../bloc/network/network_bloc.dart';
 
 class NoNetwork extends StatelessWidget {
@@ -29,9 +30,9 @@ class NoNetwork extends StatelessWidget {
                 child: Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: const [
-                      Text("No network connection..."),
-                      Padding(
+                    children: [
+                      Text("No-network-connection...".i18n()),
+                      const Padding(
                         padding: EdgeInsets.all(24.0),
                         child: CircularProgressIndicator(),
                       ),

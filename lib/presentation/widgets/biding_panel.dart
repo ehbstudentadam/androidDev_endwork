@@ -2,6 +2,7 @@ import 'package:drop_application/bloc/bid/bid_bloc.dart';
 import 'package:drop_application/data/models/bid.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:localization/localization.dart';
 import '../../data/models/item.dart';
 
 class BiddingPanel extends StatefulWidget {
@@ -73,7 +74,7 @@ class _BiddingPanelState extends State<BiddingPanel> {
                                   if (value!.isEmpty ||
                                       double.tryParse(value) == null ||
                                       value.length > 10) {
-                                    return "Invalid number";
+                                    return "Invalid-number".i18n();
                                   } else {
                                     return null;
                                   }
@@ -88,7 +89,7 @@ class _BiddingPanelState extends State<BiddingPanel> {
                                 }
                               },
                               child: Text(
-                                'PLACE BID',
+                                'PLACE-BID'.i18n(),
                                 style: Theme.of(context).textTheme.headline5,
                               ),
                             )

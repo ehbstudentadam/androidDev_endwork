@@ -3,6 +3,7 @@ import 'package:drop_application/presentation/widgets/user_drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:localization/localization.dart';
 import '../../bloc/auth/auth_bloc.dart';
 import '../../bloc/item/item_bloc.dart';
 import '../../bloc/network/network_bloc.dart';
@@ -67,8 +68,8 @@ class MyProfile extends StatelessWidget {
                     },
                     icon: const Icon(Icons.account_circle),
                   ),
-                  title: const Center(
-                    child: Text('DROP'),
+                  title: Center(
+                    child: Text('DROP'.i18n()),
                   ),
                   actions: [
                     IconButton(
@@ -100,9 +101,9 @@ class MyProfile extends StatelessWidget {
                     ),
                     automaticallyImplyLeading: false,
                     actions: <Widget>[Container()],
-                    title: const Center(
-                      child: Text("Profile configuration",
-                          style: TextStyle(
+                    title: Center(
+                      child: Text("Profile-configuration".i18n(),
+                          style: const TextStyle(
                               color: Colors.white,
                               fontSize: 30,
                               fontWeight: FontWeight.w400)),
@@ -135,7 +136,7 @@ class MyProfile extends StatelessWidget {
                                 Padding(
                                   padding: const EdgeInsets.all(24.0),
                                   child: Text(
-                                    'Current username: ${state.userName}',
+                                    "Current-username:".i18n([state.userName]),
                                     style:
                                         Theme.of(context).textTheme.headline5,
                                   ),
@@ -144,7 +145,7 @@ class MyProfile extends StatelessWidget {
                                   padding: const EdgeInsets.only(
                                       left: 24.0, right: 24),
                                   child: Text(
-                                    'Enter new username:',
+                                    'Enter-new-username:'.i18n(),
                                     style:
                                         Theme.of(context).textTheme.headline5,
                                   ),
@@ -169,7 +170,7 @@ class MyProfile extends StatelessWidget {
                                         return value!.length > 3 &&
                                             value.length < 20
                                             ? null
-                                            : "Username between 3 ~ 20 characters";
+                                            : "Username-between-3-20-characters".i18n();
                                       },
                                     ),
                                   ),
@@ -196,9 +197,9 @@ class MyProfile extends StatelessWidget {
                                           ),
                                         ),
                                       ),
-                                      label: const Text(
-                                        'Update name',
-                                        style: TextStyle(
+                                      label: Text(
+                                        'Update-name'.i18n(),
+                                        style: const TextStyle(
                                             color: Colors.white,
                                             fontSize: 20,
                                             fontWeight: FontWeight.w400),
